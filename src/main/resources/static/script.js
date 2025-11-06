@@ -1,60 +1,49 @@
-const apiUrl = "/api/students";
+const apiUrl = "http://localhost:8080/api/students";
 
-async function fetchStudents() {
-    const response = await fetch(apiUrl);
-    const students = await response.json();
-
-    const tableBody = document.querySelector("#studentsTable tbody");
-    tableBody.innerHTML = "";
-
-    students.forEach(student => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.email}</td>
-            <td>
-                <button onclick="deleteStudent(${student.id})">Delete</button>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
+async function loadStudents() {
+  const res = await fetch(apiUrl);
+  const students = await res.json();
+  const tbody = document.querySelector("#studentTable tbody");
+  tbody.innerHTML = "";
+  students.forEach(s => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${s.id}</td>
+        <td>${s.name}</td>
+        <td>${s.email}</td>
+        <td>${s.course}</td>
+        <td>
+          <button onclick="editStudent(${s.id}, '${s.name}', '${s.email}', '${s.course}')">Edit</button>
+        </td>
+      </tr>`;
+  });
 }
 
-async function addStudent() {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-
-    if (!name || !email) {
-        alert("Please fill in both fields");
-        return;
-    }
-
-    const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name, email })
-    });
-
-    if (response.ok) {
-        document.getElementById("name").value = "";
-        document.getElementById("email").value = "";
-        fetchStudents();
-    } else {
-        alert("Failed to add student");
-    }
+function editStudent(id, name, email, course) {
+  document.getElementById("studentId").value = id;
+  document.getElementById("name").value = name;
+  document.getElementById("email").value = email;
+  document.getElementById("course").value = course;
 }
 
-async function deleteStudent(id) {
-    const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
-    if (response.ok) {
-        fetchStudents();
-    } else {
-        alert("Failed to delete student");
-    }
-}
+document.getElementById("editForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const id = document.getElementById("studentId").value;
+  const updatedStudent = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    course: document.getElementById("course").value
+  };
 
-// Load students when the page opens
-window.onload = fetchStudents;
+  await fetch(`${apiUrl}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedStudent)
+  });
+
+  alert("Student updated successfully!");
+  loadStudents();
+  e.target.reset();
+});
+
+loadStudents();
