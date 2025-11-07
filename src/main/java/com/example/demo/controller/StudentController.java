@@ -1,14 +1,16 @@
 package com.example.demo.controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Student;
 import com.example.demo.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 
 
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "*")  // Allow frontend access
 public class StudentController {
 
     @Autowired
@@ -28,7 +30,8 @@ public class StudentController {
     public Student updateStudent(@PathVariable Long id, @RequestBody Student studentDetails) {
         Student s = studentRepository.findById(id).orElseThrow();
         s.setName(studentDetails.getName());
-        s.setAge(studentDetails.getAge());
+        s.setEmail(studentDetails.getEmail());
+        s.setCourse(studentDetails.getCourse());
         return studentRepository.save(s);
     }
 

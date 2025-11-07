@@ -14,6 +14,7 @@ async function loadStudents() {
         <td>${s.course}</td>
         <td>
           <button onclick="editStudent(${s.id}, '${s.name}', '${s.email}', '${s.course}')">Edit</button>
+          <button onclick="deleteStudent(${s.id})">Delete</button>
         </td>
       </tr>`;
   });
@@ -24,6 +25,14 @@ function editStudent(id, name, email, course) {
   document.getElementById("name").value = name;
   document.getElementById("email").value = email;
   document.getElementById("course").value = course;
+}
+async function deleteStudent(id) {
+    const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+    if (response.ok) {
+        fetchStudents();
+    } else {
+        alert("Failed to delete student");
+    }
 }
 
 document.getElementById("editForm").addEventListener("submit", async e => {
