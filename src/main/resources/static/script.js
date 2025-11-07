@@ -15,6 +15,7 @@ async function loadStudents() {
         <td>
           <button onclick="editStudent(${s.id}, '${s.name}', '${s.email}', '${s.course}')">Edit</button>
           <button onclick="deleteStudent(${s.id})">Delete</button>
+          
         </td>
       </tr>`;
   });
@@ -29,7 +30,7 @@ function editStudent(id, name, email, course) {
 async function deleteStudent(id) {
     const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
     if (response.ok) {
-        fetchStudents();
+        loadStudents();
     } else {
         alert("Failed to delete student");
     }
