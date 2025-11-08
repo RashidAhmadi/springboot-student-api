@@ -20,6 +20,33 @@ async function loadStudents() {
       </tr>`;
   });
 }
+async function addStudent() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const course = document.getElementById("course").value;
+
+    if (!name || !email || !course) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, email, course })
+    });
+
+    if (response.ok) {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("course").value = "";
+        loadStudents();
+    } else {
+        alert("Failed to add student");
+    }
+}
 
 function editStudent(id, name, email, course) {
   document.getElementById("studentId").value = id;
