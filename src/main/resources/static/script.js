@@ -48,11 +48,11 @@ async function addStudent() {
     }
 }
 
-function editStudent(id, name, email, course) {
+function editStudent(id, uname, uemail, ucourse) {
   document.getElementById("studentId").value = id;
-  document.getElementById("name").value = name;
-  document.getElementById("email").value = email;
-  document.getElementById("course").value = course;
+  document.getElementById("uname").value = uname;
+  document.getElementById("uemail").value = uemail;
+  document.getElementById("ucourse").value = ucourse;
 }
 async function deleteStudent(id) {
     const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
@@ -67,9 +67,9 @@ document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
   const id = document.getElementById("studentId").value;
   const updatedStudent = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    course: document.getElementById("course").value
+    name: document.getElementById("uname").value,
+    email: document.getElementById("uemail").value,
+    course: document.getElementById("ucourse").value
   };
 
   await fetch(`${apiUrl}/${id}`, {
