@@ -1,25 +1,48 @@
-const apiUrl = "http://localhost:8080/api/students";
+const searchApiUrl = "http://localhost:8080/api/students/search?name=";
+const studentApiUrl = "http://localhost:8080/api/students";
 
-async function loadStudents() {
-  const res = await fetch(apiUrl);
-  const students = await res.json();
-  const tbody = document.querySelector("#studentTable tbody");
-  tbody.innerHTML = "";
-  students.forEach(s => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${s.id}</td>
-        <td>${s.name}</td>
-        <td>${s.email}</td>
-        <td>${s.course}</td>
-        <td>
-          <button onclick="editStudent(${s.id}, '${s.name}', '${s.email}', '${s.course}')">Edit</button>
-          <button onclick="deleteStudent(${s.id})">Delete</button>
-          
+// Select the input and table body
+const searchBox = document.getElementById("searchBox");
+const studentBody = document.getElementById("studentBody");
+
+async function loadStudents(query = "") {
+  try {
+    const response = await fetch(searchApiUrl + query);
+    const students = await response.json();
+
+    // Clear previous rows
+    studentBody.innerHTML = "";
+
+    // Add new rows
+    students.forEach(student => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${student.id}</td>
+        <td>${student.name}</td>
+        <td>${student.email}</td>
+        <td>${student.course || ""}</td>
+         <td>
+          <button onclick="editStudent(${student.id})">Edit</button>
+          <button onclick="deleteStudent(${student.id})">Delete</button>
         </td>
-      </tr>`;
-  });
+      `;
+
+      studentBody.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Error fetching students:", error);
+  }
 }
+
+// Fetch all students initially
+loadStudents();
+
+// Add live search listener
+searchBox.addEventListener("input", (e) => {
+  const query = e.target.value;
+  loadStudents(query);
+});
 async function addStudent() {
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
@@ -30,7 +53,7 @@ async function addStudent() {
         return;
     }
 
-    const response = await fetch(apiUrl, {
+    const response = await fetch(studentApiUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -53,9 +76,32 @@ function editStudent(id, uname, uemail, ucourse) {
   document.getElementById("uname").value = uname;
   document.getElementById("uemail").value = uemail;
   document.getElementById("ucourse").value = ucourse;
+
+  document.getElementById("editForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const id = document.getElementById("studentId").value;
+  const updatedStudent = {
+    name: document.getElementById("uname").value,
+    email: document.getElementById("uemail").value,
+    course: document.getElementById("ucourse").value
+  };
+
+  await fetch(`${studentApiUrl}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedStudent)
+  });
+
+  alert("Student updated successfully!");
+  loadStudents();
+  e.target.reset();
+});
+
+loadStudents();
+
 }
 async function deleteStudent(id) {
-    const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+    const response = await fetch(`${studentApiUrl}/${id}`, { method: "DELETE" });
     if (response.ok) {
         loadStudents();
     } else {
@@ -71,24 +117,3 @@ async function searchStudent() {
   resultsDiv.innerHTML = students.map(s => `<p>${s.id} - ${s.name}</p>`).join('');
 }
 
-document.getElementById("editForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const id = document.getElementById("studentId").value;
-  const updatedStudent = {
-    name: document.getElementById("uname").value,
-    email: document.getElementById("uemail").value,
-    course: document.getElementById("ucourse").value
-  };
-
-  await fetch(`${apiUrl}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedStudent)
-  });
-
-  alert("Student updated successfully!");
-  loadStudents();
-  e.target.reset();
-});
-
-loadStudents();
