@@ -40,4 +40,8 @@ public class StudentController {
         studentRepository.deleteById(id);
         return "Deleted";
     }
+     @GetMapping("/search")
+    public List<Student> searchStudents(@RequestParam("name") String name) {
+        return studentRepository.findByNameContainingIgnoreCase(name);
+    }
 }

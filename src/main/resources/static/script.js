@@ -62,6 +62,14 @@ async function deleteStudent(id) {
         alert("Failed to delete student");
     }
 }
+async function searchStudent() {
+  const name = document.getElementById("searchBox").value;
+  const response = await fetch(`http://localhost:8080/api/students/search?name=${name}`);
+  const students = await response.json();
+
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = students.map(s => `<p>${s.id} - ${s.name}</p>`).join('');
+}
 
 document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
