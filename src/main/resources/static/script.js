@@ -71,11 +71,11 @@ async function addStudent() {
     }
 }
 
-function editStudent(id, uname, uemail, ucourse) {
+function editStudent(id, name, email, course) {
   document.getElementById("studentId").value = id;
-  document.getElementById("uname").value = uname;
-  document.getElementById("uemail").value = uemail;
-  document.getElementById("ucourse").value = ucourse;
+  document.getElementById("uname").value = name;
+  document.getElementById("uemail").value = email;
+  document.getElementById("ucourse").value = course;
 
   document.getElementById("editForm").addEventListener("submit", async e => {
   e.preventDefault();
@@ -108,12 +108,5 @@ async function deleteStudent(id) {
         alert("Failed to delete student");
     }
 }
-async function searchStudent() {
-  const name = document.getElementById("searchBox").value;
-  const response = await fetch(`http://localhost:8080/api/students/search?name=${name}`);
-  const students = await response.json();
 
-  const resultsDiv = document.getElementById("results");
-  resultsDiv.innerHTML = students.map(s => `<p>${s.id} - ${s.name}</p>`).join('');
-}
 
