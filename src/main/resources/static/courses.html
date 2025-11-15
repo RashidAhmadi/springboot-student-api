@@ -1,28 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Courses</title>
-    <link rel="stylesheet" href="courses.css">
+  <meta charset="utf-8" />
+  <title>Course Management</title>
+  <link rel="stylesheet" href="courses.css" />
 </head>
 <body>
-<h1>Course Management</h1>
-<input type="text" id="searchInput" placeholder="Search course by name">
-<button onclick="searchCourses()">Search</button>
-<button onclick="loadCourses()">Refresh</button>
-<table id="courseTable" border="1">
-    <thead>
+  <div class="page">
+    <h1>Course Management</h1>
+
+    <div class="top-bar">
+      <div class="add-form">
+        <input id="addName" placeholder="Course name" />
+        <input id="addCode" placeholder="Code" />
+        <input id="addCredits" placeholder="Credits" type="number" min="0" />
+        <button id="addBtn">Add Course</button>
+      </div>
+
+      <div class="search">
+        <input id="searchInput" placeholder="Search by name..." />
+        <button id="searchBtn">Search</button>
+        <button id="clearSearchBtn">Clear</button>
+      </div>
+    </div>
+
+    <table id="courseTable">
+      <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Description</th>
-            <th>Credits</th>
-            <th>Actions</th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Description</th>
+          <th>Credits</th>
+          <th>Actions</th>
         </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-<script src="courses.js"></script>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- Edit modal (simple) -->
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Course</h3>
+      <input id="editName" placeholder="Name" />
+      <input id="editCode" placeholder="Code" />
+      <textarea id="editDescription" placeholder="Description"></textarea>
+      <input id="editCredits" type="number" min="0" placeholder="Credits" />
+      <div class="modal-actions">
+        <button id="saveEditBtn">Save</button>
+        <button id="cancelEditBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="courses.js"></script>
 </body>
 </html>
