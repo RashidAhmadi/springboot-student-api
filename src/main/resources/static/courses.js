@@ -3,7 +3,7 @@ const apiBase = "/api/courses"; // relative path works when hosted from same ser
 
 // Paging state
 let currentPage = 0;
-let pageSize = 5;
+let pageSize = 10;
 let totalPages = 0;
 let currentSearch = "";
 
@@ -215,4 +215,125 @@ function escapeHtml(text) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+
+
+// --- Modal elements ---
+const openAddCourseBtn = document.getElementById("openAddCourseBtn");
+const addCourseOverlay = document.getElementById("addCourseOverlay");
+const addCloseBtn = document.getElementById("addCloseBtn");
+const addCancelBtn = document.getElementById("addCancelBtn");
+const addSaveBtn = document.getElementById("addSaveBtn");
+const addCourseForm = document.getElementById("addCourseForm");
+const addFormMessage = document.getElementById("addFormMessage");
+
+// Make sure elements exist (page may not include modal if different page)
+if (openAddCourseBtn && addCourseOverlay) {
+  // Open modal
+  openAddCourseBtn.addEventListener("click", () => openAddModal());
+
+  // Close controls
+  addCloseBtn.addEventListener("click", () => closeAddModal());
+  addCancelBtn.addEventListener("click", () => closeAddModal());
+
+  // Close when clicking outside modal content
+  addCourseOverlay.addEventListener("click", (e) => {
+    if (e.target === addCourseOverlay) closeAddModal();
+  });
+
+  // Save handler
+  addSaveBtn.addEventListener("click", async () => {
+    await submitAddCourse();
+  });
+
+  // keyboard: Esc closes
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !addCourseOverlay.classList.contains("hidden")) {
+      closeAddModal();
+    }
+  });
+}
+
+// Open modal helper
+function openAddModal() {
+  addFormMessage.textContent = "";
+  addCourseForm.reset();
+  addCourseOverlay.classList.remove("hidden");
+  addCourseOverlay.setAttribute("aria-hidden", "false");
+  // put focus on first field
+  const first = addCourseForm.querySelector("input, textarea");
+  if (first) first.focus();
+}
+
+// Close modal helper
+function closeAddModal() {
+  addCourseOverlay.classList.add("hidden");
+  addCourseOverlay.setAttribute("aria-hidden", "true");
+  addFormMessage.textContent = "";
+}
+
+// Validate form fields (basic)
+function validateAddForm() {
+  const name = document.getElementById("addName").value.trim();
+  if (!name) {
+    return "Course name is required.";
+  }
+  const creditsVal = document.getElementById("addCredits").value;
+  if (creditsVal !== "" && Number(creditsVal) < 0) {
+    return "Credits cannot be negative.";
+  }
+  return null;
+}
+
+// Submit new course to API
+async function submitAddCourse() {
+  addSaveBtn.disabled = true;
+  addSaveBtn.textContent = "Saving...";
+
+  addFormMessage.textContent = "";
+
+  const validationError = validateAddForm();
+  if (validationError) {
+    addFormMessage.textContent = validationError;
+    addSaveBtn.disabled = false;
+    addSaveBtn.textContent = "Save";
+    return;
+  }
+
+  const payload = {
+    name: document.getElementById("addName").value.trim(),
+    code: document.getElementById("addCode").value.trim(),
+    description: document.getElementById("addDescription").value.trim(),
+    credits: (document.getElementById("addCredits").value === "") ? 0 : Number(document.getElementById("addCredits").value)
+  };
+
+  try {
+    const res = await fetch("/api/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const txt = await res.text();
+      addFormMessage.textContent = `Server error: ${res.status} ${txt}`;
+      addSaveBtn.disabled = false;
+      addSaveBtn.textContent = "Save";
+      return;
+    }
+
+    // Success
+    closeAddModal();
+
+    // Refresh the list — go to first page to see new record if you prefer:
+    loadCourses(0);
+
+  } catch (err) {
+    addFormMessage.textContent = "Network error. Please try again.";
+    console.error("Add course error:", err);
+  } finally {
+    addSaveBtn.disabled = false;
+    addSaveBtn.textContent = "Save";
+  }
 }

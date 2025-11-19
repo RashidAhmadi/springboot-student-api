@@ -10,13 +10,7 @@
     <h1>Course Management</h1>
 
     <div class="top-bar">
-      <div class="add-form">
-        <input id="addName" placeholder="Course name" />
-        <input id="addCode" placeholder="Code" />
-        <textarea id="addDescription" placeholder="Description"></textarea>
-        <input id="addCredits" placeholder="Credits" type="number" min="0" />
-        <button id="addBtn">Add Course</button>
-      </div>
+      <button id="openAddCourseBtn" class="add-btn">+ Add Course</button>
 
       <div class="search">
         <input id="searchInput" placeholder="Search by name..." />
@@ -56,6 +50,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Add Course Popup Overlay (hidden by default) -->
+<div id="addCourseOverlay" class="overlay hidden" aria-hidden="true" role="dialog" aria-labelledby="addCourseTitle">
+  <div class="modal" role="document">
+    <button id="addCloseBtn" class="modal-close" aria-label="Close add course dialog">&times;</button>
+
+    <h2 id="addCourseTitle">Add Course</h2>
+
+    <form id="addCourseForm" novalidate>
+      <label for="addName">Name <span class="required">*</span></label>
+      <input id="addName" name="name" type="text" required />
+
+      <label for="addCode">Code</label>
+      <input id="addCode" name="code" type="text" />
+
+      <label for="addDescription">Description</label>
+      <textarea id="addDescription" name="description" rows="4"></textarea>
+
+      <label for="addCredits">Credits</label>
+      <input id="addCredits" name="credits" type="number" min="0" value="0" />
+
+      <div class="modal-actions">
+        <button type="button" id="addSaveBtn" class="btn save-btn">Save</button>
+        <button type="button" id="addCancelBtn" class="btn cancel-btn">Cancel</button>
+      </div>
+
+      <div id="addFormMessage" class="form-message" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
 
   <script src="courses.js"></script>
 </body>
