@@ -37,12 +37,19 @@
   </div>
 
   <!-- Edit modal (simple) -->
-  <div id="editModal" class="modal hidden">
+  <div id="editModal" class="overlay hidden">
     <div class="modal-content">
       <h3>Edit Course</h3>
+      <label for="editName">Edit Name <span class="required">*</span></label>
       <input id="editName" placeholder="Name" />
+
+      <label for="editCode">Edit Code <span class="required">*</span></label>
       <input id="editCode" placeholder="Code" />
+
+      <label for="editDescription">Edit Course Description <span class="required">*</span></label>
       <textarea id="editDescription" placeholder="Description"></textarea>
+
+      <label for="editCredits">Edit Course Credits <span class="required">*</span></label>
       <input id="editCredits" type="number" min="0" placeholder="Credits" />
       <div class="modal-actions">
         <button id="saveEditBtn">Save</button>
@@ -56,20 +63,20 @@
   <div class="modal" role="document">
     <button id="addCloseBtn" class="modal-close" aria-label="Close add course dialog">&times;</button>
 
-    <h2 id="addCourseTitle">Add Course</h2>
+  <h2>Add courses</h2>
 
     <form id="addCourseForm" novalidate>
       <label for="addName">Name <span class="required">*</span></label>
       <input id="addName" name="name" type="text" required />
 
       <label for="addCode">Code</label>
-      <input id="addCode" name="code" type="text" />
+      <input id="addCode" name="code" type="text"  required/>
 
       <label for="addDescription">Description</label>
       <textarea id="addDescription" name="description" rows="4"></textarea>
 
       <label for="addCredits">Credits</label>
-      <input id="addCredits" name="credits" type="number" min="0" value="0" />
+      <input id="addCredits" name="credits" type="number" min="0" value="0" required/>
 
       <div class="modal-actions">
         <button type="button" id="addSaveBtn" class="btn save-btn">Save</button>
