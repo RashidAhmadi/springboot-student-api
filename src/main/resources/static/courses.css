@@ -64,6 +64,7 @@ thead th { background:#f0f4f8; color:#2c3e50; }
 
 /* Form */
 #addCourseForm label { display:block; margin-top:8px; margin-bottom:6px; font-weight:600; }
+#saveEditBtn {background:#27ae60; color:#fff; border:none; border-radius:4px;}
 #addCourseForm input,
 #addCourseForm textarea {
   width:100%;
@@ -79,6 +80,7 @@ thead th { background:#f0f4f8; color:#2c3e50; }
 .btn { padding:8px 12px; border-radius:4px; cursor:pointer; border:none; }
 .save-btn { background:#27ae60; color:#fff; }
 .cancel-btn { background:#bdc3c7; color:#fff; }
+.add-btn{background:#27ae60; color:#fff; border:none; border-radius:4px;}
 
 /* message */
 .form-message { margin-top:8px; color:#c0392b; font-size:0.95em; }

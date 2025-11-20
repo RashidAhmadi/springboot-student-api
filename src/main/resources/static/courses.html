@@ -46,11 +46,11 @@
       <label for="editCode">Edit Code <span class="required">*</span></label>
       <input id="editCode" placeholder="Code" />
 
-      <label for="editDescription">Edit Course Description <span class="required">*</span></label>
+      <label for="editDescription">Edit Course Description </label>
       <textarea id="editDescription" placeholder="Description"></textarea>
 
       <label for="editCredits">Edit Course Credits <span class="required">*</span></label>
-      <input id="editCredits" type="number" min="0" placeholder="Credits" />
+      <input id="editCredits" type="number" min="0" max="6" placeholder="Credits" />
       <div class="modal-actions">
         <button id="saveEditBtn">Save</button>
         <button id="cancelEditBtn">Cancel</button>
@@ -60,23 +60,22 @@
 
   <!-- Add Course Popup Overlay (hidden by default) -->
 <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true" role="dialog" aria-labelledby="addCourseTitle">
-  <div class="modal" role="document">
+  <div class="modal-content">
+    <h3>Add Course</h3>
     <button id="addCloseBtn" class="modal-close" aria-label="Close add course dialog">&times;</button>
 
-  <h2>Add courses</h2>
-
     <form id="addCourseForm" novalidate>
-      <label for="addName">Name <span class="required">*</span></label>
+      <label for="addName">Course Name <span class="required">*</span></label>
       <input id="addName" name="name" type="text" required />
 
-      <label for="addCode">Code</label>
+      <label for="addCode">Course Code<span class="required">*</span></label>
       <input id="addCode" name="code" type="text"  required/>
 
-      <label for="addDescription">Description</label>
+      <label for="addDescription">Course Description</label>
       <textarea id="addDescription" name="description" rows="4"></textarea>
 
-      <label for="addCredits">Credits</label>
-      <input id="addCredits" name="credits" type="number" min="0" value="0" required/>
+      <label for="addCredits">Course Credits<span class="required">*</span></label>
+      <input id="addCredits" name="credits" type="number" min="0" max="6" value="0" required/>
 
       <div class="modal-actions">
         <button type="button" id="addSaveBtn" class="btn save-btn">Save</button>
@@ -85,6 +84,7 @@
 
       <div id="addFormMessage" class="form-message" aria-live="polite"></div>
     </form>
+  </div>
   </div>
 </div>
 
