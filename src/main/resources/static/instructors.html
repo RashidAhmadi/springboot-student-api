@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Management</title>
+    <link rel="stylesheet" href="instructors.css">
+</head>
+<body>
+
+    <h1>Instructor Management</h1>
+
+    <div class="top-bar">
+        <input type="text" id="searchInput" placeholder="Search instructors...">
+        <button onclick="openAddPopup()">Add Instructor</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Lastname</th>
+                <th>Faculty</th>
+                <th>Department</th>
+                <th>Academic Rank</th>
+                <th>Degree</th>
+                <th>Employment</th>
+                <th>Proficiency</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="instructorTableBody"></tbody>
+    </table>
+
+    <div class="pagination">
+        <button onclick="prevPage()">Previous</button>
+        <span id="pageInfo"></span>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+    <!-- Popup Modal -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2 id="popupTitle">Add Instructor</h2>
+
+            <form id="instructorForm">
+                <input type="hidden" id="instructorId">
+
+                <label>Name:</label>
+                <input type="text" id="name" required>
+
+                <label>Lastname:</label>
+                <input type="text" id="lastname" required>
+
+                <label>Faculty:</label>
+                <input type="text" id="faculty" required>
+
+                <label>Department:</label>
+                <input type="text" id="department" required>
+
+                <label>Academic Rank:</label>
+                <input type="text" id="academicRank" required>
+
+                <label>Education Degree:</label>
+                <input type="text" id="degree" required>
+
+                <label>Employment (Visitor/Permanent):</label>
+                <input type="text" id="employment" required>
+
+                <label>Proficiency:</label>
+                <input type="text" id="proficiency" required>
+
+                <div class="btn-group">
+                    <button type="button" onclick="closePopup()">Cancel</button>
+                    <button type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Popup -->
+    <div id="confirmDeletePopup" class="popup">
+        <div class="popup-content">
+            <h3>Are you sure you want to delete this instructor?</h3>
+            <div class="btn-group">
+                <button onclick="closeDeletePopup()">Cancel</button>
+                <button onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+<script src="instructors.js"></script>
+</body>
+</html>
