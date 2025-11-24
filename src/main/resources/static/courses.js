@@ -1,5 +1,6 @@
-// API base
-const apiBase = "/api/courses"; // relative path works when hosted from same server
+// =================== CONFIG ===================
+const apiBase = "/api/courses"; // Course API endpoint
+const instructorsAllEndpoint = "/api/instructors/all"; // expects full list (non-paginated)
 
 // Paging state
 let currentPage = 0;
@@ -7,29 +8,50 @@ let pageSize = 10;
 let totalPages = 0;
 let currentSearch = "";
 
-// Elements
+// HTML elements
 const tbody = document.querySelector("#courseTable tbody");
 const paginationDiv = document.getElementById("pagination");
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
-const addBtn = document.getElementById("addBtn");
+const openAddCourseBtn = document.getElementById("openAddCourseBtn");
 
-// Modal elements
+// Edit modal elements
 const editModal = document.getElementById("editModal");
 const editName = document.getElementById("editName");
 const editCode = document.getElementById("editCode");
 const editDescription = document.getElementById("editDescription");
 const editCredits = document.getElementById("editCredits");
+const editInstructorSelect = document.getElementById("editInstructorSelect");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
+const editCloseBtn = document.getElementById("editCloseBtn");
+const editingIdField = document.getElementById("editingId");
+const editFormMessage = document.getElementById("editFormMessage");
+
+// Add modal elements
+const addCourseOverlay = document.getElementById("addCourseOverlay");
+const addCourseForm = document.getElementById("addCourseForm");
+const addName = document.getElementById("addName");
+const addCode = document.getElementById("addCode");
+const addDescription = document.getElementById("addDescription");
+const addCredits = document.getElementById("addCredits");
+const addInstructorSelect = document.getElementById("instructorSelect");
+const addSaveBtn = document.getElementById("addSaveBtn");
+const addCancelBtn = document.getElementById("addCancelBtn");
+const addCloseBtn = document.getElementById("addCloseBtn");
+const addFormMessage = document.getElementById("addFormMessage");
 
 let editingId = null;
 
-// Load initial
-window.addEventListener("load", () => loadCourses(0));
+// =================== INIT ===================
+window.addEventListener("load", () => {
+  loadCourses(0);
+  // preload instructors for add form
+  loadInstructorsIntoAdd();
+});
 
-// Event bindings
+// Search and control bindings
 searchBtn?.addEventListener("click", () => {
   currentSearch = searchInput.value.trim();
   loadCourses(0);
@@ -39,88 +61,63 @@ clearSearchBtn?.addEventListener("click", () => {
   currentSearch = "";
   loadCourses(0);
 });
+openAddCourseBtn?.addEventListener("click", openAddModal);
 
-addBtn?.addEventListener("click", async () => {
-  const name = document.getElementById("addName").value.trim();
-  const code = document.getElementById("addCode").value.trim();
-  const creditsVal = document.getElementById("addCredits").value.trim();
-  const credits = creditsVal ? parseInt(creditsVal, 10) : 0;
-
-  if (!name) { alert("Fill course name"); return; }
-
-  const payload = { name, code, description: "", credits };
-
-  await fetch(apiBase, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+// Add modal bindings
+if (addCourseOverlay) {
+  addCloseBtn?.addEventListener("click", closeAddModal);
+  addCancelBtn?.addEventListener("click", closeAddModal);
+  addSaveBtn?.addEventListener("click", submitAddCourse);
+  addCourseOverlay.addEventListener("click", (e) => {
+    if (e.target === addCourseOverlay) closeAddModal();
   });
+}
 
-  // clear inputs
-  document.getElementById("addName").value = "";
-  document.getElementById("addCode").value = "";
-  document.getElementById("addCredits").value = "";
-
-  loadCourses(0);
+// Edit modal bindings
+cancelEditBtn?.addEventListener("click", closeEditModal);
+saveEditBtn?.addEventListener("click", submitEdit);
+editCloseBtn?.addEventListener("click", closeEditModal);
+editModal?.addEventListener("click", (e) => {
+  if (e.target === editModal) closeEditModal();
 });
 
-// Edit modal handlers
-cancelEditBtn?.addEventListener("click", () => closeEditModal());
-saveEditBtn?.addEventListener("click", async () => {
-  if (!editingId) return;
-  const body = {
-    name: editName.value.trim(),
-    code: editCode.value.trim(),
-    description: editDescription.value.trim(),
-    credits: editCredits.value ? parseInt(editCredits.value, 10) : 0
-  };
-
-  await fetch(`${apiBase}/${editingId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  closeEditModal();
-  loadCourses(currentPage);
-});
-
-// Load courses (paged)
+// =================== LOAD COURSES ===================
 async function loadCourses(page = 0) {
   currentPage = page;
-  const size = pageSize;
 
-  let url;
-  if (currentSearch) {
-    url = `${apiBase}/search?name=${encodeURIComponent(currentSearch)}&page=${page}&size=${size}`;
-  } else {
-    url = `${apiBase}?page=${page}&size=${size}`;
-  }
+  const url = currentSearch
+    ? `${apiBase}/search?name=${encodeURIComponent(currentSearch)}&page=${page}&size=${pageSize}`
+    : `${apiBase}?page=${page}&size=${pageSize}`;
 
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`API ${res.status}`);
-    const data = await res.json(); // Spring returns Page<Course> JSON
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = await res.json();
 
-    // Spring's Page JSON has: content, totalPages, totalElements, number (page index)
     const courses = data.content || [];
     totalPages = data.totalPages || 0;
+
     renderTable(courses);
     renderPagination();
   } catch (err) {
-    console.error("Load courses error", err);
-    tbody.innerHTML = `<tr><td colspan="6">Error loading courses</td></tr>`;
+    console.error("Failed to load courses:", err);
+    tbody.innerHTML = `<tr><td colspan="7">Error loading courses</td></tr>`;
   }
 }
 
+// =================== RENDER TABLE ===================
 function renderTable(courses) {
   tbody.innerHTML = "";
   if (!courses.length) {
-    tbody.innerHTML = `<tr><td colspan="6">No courses found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7">No courses found</td></tr>`;
     return;
   }
 
   courses.forEach(c => {
+    const instructorName = c.instructor
+      ? `${c.instructor.name || ""} ${c.instructor.lastname || ""}`.trim()
+      : "";
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${c.id}</td>
@@ -128,6 +125,7 @@ function renderTable(courses) {
       <td>${escapeHtml(c.code || "")}</td>
       <td>${escapeHtml(c.description || "")}</td>
       <td>${c.credits ?? ""}</td>
+      <td>${escapeHtml(instructorName)}</td>
       <td class="actions">
         <button class="btn-edit" data-id="${c.id}">Edit</button>
         <button class="btn-delete" data-id="${c.id}">Delete</button>
@@ -136,204 +134,220 @@ function renderTable(courses) {
     tbody.appendChild(tr);
   });
 
-  // wire buttons
-  document.querySelectorAll(".btn-delete").forEach(btn => {
+  // wire actions
+  document.querySelectorAll(".btn-delete").forEach(btn =>
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
       if (!confirm("Delete this course?")) return;
       await fetch(`${apiBase}/${id}`, { method: "DELETE" });
       loadCourses(currentPage);
-    });
-  });
+    })
+  );
 
-  document.querySelectorAll(".btn-edit").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
-      openEditModal(id);
-    });
-  });
+  document.querySelectorAll(".btn-edit").forEach(btn =>
+    btn.addEventListener("click", () => openEditModal(btn.dataset.id))
+  );
 }
 
+// =================== PAGINATION ===================
 function renderPagination() {
   paginationDiv.innerHTML = "";
   if (totalPages <= 1) return;
 
-  // Prev
   const prev = document.createElement("button");
   prev.textContent = "Prev";
-  prev.disabled = currentPage <= 0;
-  prev.addEventListener("click", () => loadCourses(currentPage - 1));
+  prev.disabled = currentPage === 0;
+  prev.onclick = () => loadCourses(currentPage - 1);
   paginationDiv.appendChild(prev);
 
-  // page numbers (show up to 7)
   const maxButtons = 7;
   const start = Math.max(0, currentPage - Math.floor(maxButtons / 2));
-  let end = start + maxButtons;
-  if (end > totalPages) { end = totalPages; }
+  let end = Math.min(totalPages, start + maxButtons);
 
   for (let i = start; i < end; i++) {
     const btn = document.createElement("button");
-    btn.textContent = (i + 1);
+    btn.textContent = i + 1;
     if (i === currentPage) btn.classList.add("active");
-    btn.addEventListener("click", () => loadCourses(i));
+    btn.onclick = () => loadCourses(i);
     paginationDiv.appendChild(btn);
   }
 
-  // Next
   const next = document.createElement("button");
   next.textContent = "Next";
-  next.disabled = currentPage >= (totalPages - 1);
-  next.addEventListener("click", () => loadCourses(currentPage + 1));
+  next.disabled = currentPage >= totalPages - 1;
+  next.onclick = () => loadCourses(currentPage + 1);
   paginationDiv.appendChild(next);
 }
 
-// Edit modal open
-async function openEditModal(id) {
-  try {
-    const res = await fetch(`${apiBase}/${id}`);
-    if (!res.ok) throw new Error("Not found");
-    const c = await res.json();
-    editingId = c.id;
-    editName.value = c.name || "";
-    editCode.value = c.code || "";
-    editDescription.value = c.description || "";
-    editCredits.value = c.credits ?? "";
-    editModal.classList.remove("hidden");
-  } catch (err) {
-    alert("Failed to load course");
-  }
-}
-
-function closeEditModal() {
-  editingId = null;
-  editModal.classList.add("hidden");
-}
-
-// small helper to avoid HTML injection
-function escapeHtml(text) {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-
-
-// --- Modal elements ---
-const openAddCourseBtn = document.getElementById("openAddCourseBtn");
-const addCourseOverlay = document.getElementById("addCourseOverlay");
-const addCloseBtn = document.getElementById("addCloseBtn");
-const addCancelBtn = document.getElementById("addCancelBtn");
-const addSaveBtn = document.getElementById("addSaveBtn");
-const addCourseForm = document.getElementById("addCourseForm");
-const addFormMessage = document.getElementById("addFormMessage");
-
-// Make sure elements exist (page may not include modal if different page)
-if (openAddCourseBtn && addCourseOverlay) {
-  // Open modal
-  openAddCourseBtn.addEventListener("click", () => openAddModal());
-
-  // Close controls
-  addCloseBtn.addEventListener("click", () => closeAddModal());
-  addCancelBtn.addEventListener("click", () => closeAddModal());
-
-  // Close when clicking outside modal content
-  addCourseOverlay.addEventListener("click", (e) => {
-    if (e.target === addCourseOverlay) closeAddModal();
-  });
-
-  // Save handler
-  addSaveBtn.addEventListener("click", async () => {
-    await submitAddCourse();
-  });
-
-  // keyboard: Esc closes
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !addCourseOverlay.classList.contains("hidden")) {
-      closeAddModal();
-    }
-  });
-}
-
-// Open modal helper
+// =================== ADD COURSE ===================
 function openAddModal() {
-  addFormMessage.textContent = "";
   addCourseForm.reset();
+  addFormMessage.textContent = "";
   addCourseOverlay.classList.remove("hidden");
-  addCourseOverlay.setAttribute("aria-hidden", "false");
-  // put focus on first field
-  const first = addCourseForm.querySelector("input, textarea");
-  if (first) first.focus();
+  // load instructors fresh
+  loadInstructorsIntoAdd();
+  addName.focus();
 }
 
-// Close modal helper
 function closeAddModal() {
   addCourseOverlay.classList.add("hidden");
-  addCourseOverlay.setAttribute("aria-hidden", "true");
-  addFormMessage.textContent = "";
 }
 
-// Validate form fields (basic)
-function validateAddForm() {
-  const name = document.getElementById("addName").value.trim();
-  if (!name) {
-    return "Course name is required.";
-  }
-  const creditsVal = document.getElementById("addCredits").value;
-  if (creditsVal !== "" && Number(creditsVal) < 0) {
-    return "Credits cannot be negative.";
-  }
-  return null;
-}
-
-// Submit new course to API
 async function submitAddCourse() {
-  addSaveBtn.disabled = true;
-  addSaveBtn.textContent = "Saving...";
-
   addFormMessage.textContent = "";
+  const payload = {
+    name: addName.value.trim(),
+    code: addCode.value.trim(),
+    description: addDescription.value.trim(),
+    credits: Number(addCredits.value || 0),
+    instructorId: addInstructorSelect.value || null
+  };
 
-  const validationError = validateAddForm();
-  if (validationError) {
-    addFormMessage.textContent = validationError;
-    addSaveBtn.disabled = false;
-    addSaveBtn.textContent = "Save";
+  if (!payload.name) {
+    addFormMessage.textContent = "Name is required.";
     return;
   }
 
-  const payload = {
-    name: document.getElementById("addName").value.trim(),
-    code: document.getElementById("addCode").value.trim(),
-    description: document.getElementById("addDescription").value.trim(),
-    credits: (document.getElementById("addCredits").value === "") ? 0 : Number(document.getElementById("addCredits").value)
-  };
+  addSaveBtn.disabled = true;
+  addSaveBtn.textContent = "Saving...";
 
   try {
-    const res = await fetch("/api/courses", {
+    const res = await fetch(apiBase, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
-      const txt = await res.text();
-      addFormMessage.textContent = `Server error: ${res.status} ${txt}`;
-      addSaveBtn.disabled = false;
-      addSaveBtn.textContent = "Save";
+      addFormMessage.textContent = `Server error: ${res.status}`;
       return;
     }
 
-    // Success
     closeAddModal();
-
-    // Refresh the list — go to first page to see new record if you prefer:
     loadCourses(0);
-
   } catch (err) {
-    addFormMessage.textContent = "Network error. Please try again.";
-    console.error("Add course error:", err);
+    addFormMessage.textContent = "Network error.";
+    console.error(err);
   } finally {
     addSaveBtn.disabled = false;
     addSaveBtn.textContent = "Save";
   }
 }
+
+// =================== EDIT COURSE ===================
+async function openEditModal(id) {
+  try {
+    const res = await fetch(`${apiBase}/${id}`);
+    if (!res.ok) throw new Error("Not found");
+    const course = await res.json();
+
+    editingIdField.value = course.id;
+    editName.value = course.name || "";
+    editCode.value = course.code || "";
+    editDescription.value = course.description || "";
+    editCredits.value = course.credits ?? "";
+
+    // load instructors then set selected
+    await loadInstructorsIntoEdit();
+    editInstructorSelect.value = course.instructor ? (course.instructor.id || "") : "";
+
+    editFormMessage.textContent = "";
+    editModal.classList.remove("hidden");
+    editName.focus();
+  } catch (err) {
+    alert("Failed to load course.");
+    console.error(err);
+  }
+}
+
+function closeEditModal() {
+  editingIdField.value = "";
+  editModal.classList.add("hidden");
+}
+
+async function submitEdit() {
+  const id = editingIdField.value;
+  if (!id) return;
+
+  const payload = {
+    name: editName.value.trim(),
+    code: editCode.value.trim(),
+    description: editDescription.value.trim(),
+    credits: Number(editCredits.value || 0),
+    instructorId: editInstructorSelect.value || null
+  };
+
+  saveEditBtn.disabled = true;
+  saveEditBtn.textContent = "Saving...";
+
+  try {
+    const res = await fetch(`${apiBase}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      editFormMessage.textContent = `Server error: ${res.status}`;
+      return;
+    }
+
+    closeEditModal();
+    loadCourses(currentPage);
+  } catch (err) {
+    editFormMessage.textContent = "Network error.";
+    console.error(err);
+  } finally {
+    saveEditBtn.disabled = false;
+    saveEditBtn.textContent = "Save";
+  }
+}
+
+// =================== LOAD INSTRUCTORS ===================
+async function loadInstructorsIntoAdd() {
+  try {
+    const res = await fetch(instructorsAllEndpoint);
+    if (!res.ok) throw new Error("Instructor API error");
+    const list = await res.json();
+
+    addInstructorSelect.innerHTML = `<option value="">-- No instructor --</option>`;
+    list.forEach(i => {
+      addInstructorSelect.innerHTML += `
+        <option value="${i.id}">${escapeHtml(i.name || "")} ${escapeHtml(i.lastname || "")}</option>
+      `;
+    });
+  } catch (err) {
+    console.error("Failed to load instructors (add):", err);
+    addInstructorSelect.innerHTML = `<option value="">-- failed to load --</option>`;
+  }
+}
+
+async function loadInstructorsIntoEdit() {
+  try {
+    const res = await fetch(instructorsAllEndpoint);
+    if (!res.ok) throw new Error("Instructor API error");
+    const list = await res.json();
+
+    editInstructorSelect.innerHTML = `<option value="">-- No instructor --</option>`;
+    list.forEach(i => {
+      editInstructorSelect.innerHTML += `
+        <option value="${i.id}">${escapeHtml(i.name || "")} ${escapeHtml(i.lastname || "")}</option>
+      `;
+    });
+  } catch (err) {
+    console.error("Failed to load instructors (edit):", err);
+    editInstructorSelect.innerHTML = `<option value="">-- failed to load --</option>`;
+  }
+}
+
+// =================== HELPERS ===================
+function escapeHtml(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+// wire edit save button (submit)
+saveEditBtn?.addEventListener("click", submitEdit);

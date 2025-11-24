@@ -1,11 +1,11 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "course")
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,18 +16,17 @@ public class Course {
     @Column(length = 2000)
     private String description;
 
-    private Integer credits;
+    private Integer credits = 0;
+
+    // NEW: many-to-one relationship to Instructor
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "instructor_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Instructor instructor;
 
     public Course() {}
 
-    public Course(String name, String code, String description, Integer credits) {
-        this.name = name;
-        this.code = code;
-        this.description = description;
-        this.credits = credits;
-    }
-
-    // getters & setters
+    // getters and setters for all fields
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -42,4 +41,7 @@ public class Course {
 
     public Integer getCredits() { return credits; }
     public void setCredits(Integer credits) { this.credits = credits; }
+
+    public Instructor getInstructor() { return instructor; }
+    public void setInstructor(Instructor instructor) { this.instructor = instructor; }
 }

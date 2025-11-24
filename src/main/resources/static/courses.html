@@ -3,23 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <title>Course Management</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="courses.css" />
 </head>
 <body>
-  <div class="page">
-    <h1>Course Management</h1>
+  <div class="container">
+    <header>
+      <h1>Course Management</h1>
+    </header>
 
     <div class="top-bar">
-      <button id="openAddCourseBtn" class="add-btn">+ Add Course</button>
-
-      <div class="search">
+      <div class="left">
         <input id="searchInput" placeholder="Search by name..." />
         <button id="searchBtn">Search</button>
         <button id="clearSearchBtn">Clear</button>
       </div>
+      <div class="right">
+        <button id="openAddCourseBtn" class="primary">+ Add Course</button>
+      </div>
     </div>
 
-    <table id="courseTable">
+    <table id="courseTable" class="data-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -27,67 +31,89 @@
           <th>Code</th>
           <th>Description</th>
           <th>Credits</th>
+          <th>Instructor</th>
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+        <!-- filled by JS -->
+      </tbody>
     </table>
 
-    <div class="pagination" id="pagination"></div>
+    <div id="pagination" class="pagination"></div>
   </div>
 
-  <!-- Edit modal (simple) -->
-  <div id="editModal" class="overlay hidden">
-    <div class="modal-content">
-      <h3>Edit Course</h3>
-      <label for="editName">Edit Name <span class="required">*</span></label>
-      <input id="editName" placeholder="Name" />
+  <!-- Add Course Modal -->
+  <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+      <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="addCourseTitle">Add Course</h2>
 
-      <label for="editCode">Edit Code <span class="required">*</span></label>
-      <input id="editCode" placeholder="Code" />
+      <form id="addCourseForm" class="modal-form" onsubmit="return false;">
+        <label for="addName">Name *</label>
+        <input id="addName" required />
 
-      <label for="editDescription">Edit Course Description </label>
-      <textarea id="editDescription" placeholder="Description"></textarea>
+        <label for="addCode">Code</label>
+        <input id="addCode" />
 
-      <label for="editCredits">Edit Course Credits <span class="required">*</span></label>
-      <input id="editCredits" type="number" min="0" max="6" placeholder="Credits" />
-      <div class="modal-actions">
-        <button id="saveEditBtn">Save</button>
-        <button id="cancelEditBtn">Cancel</button>
-      </div>
+        <label for="addDescription">Description</label>
+        <textarea id="addDescription" rows="3"></textarea>
+
+        <label for="addCredits">Credits</label>
+        <input id="addCredits" type="number" min="0" value="0" />
+
+        <label for="instructorSelect">Instructor</label>
+        <select id="instructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="addFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="addCancelBtn" class="btn">Cancel</button>
+            <button type="button" id="addSaveBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Add Course Popup Overlay (hidden by default) -->
-<div id="addCourseOverlay" class="overlay hidden" aria-hidden="true" role="dialog" aria-labelledby="addCourseTitle">
-  <div class="modal-content">
-    <h3>Add Course</h3>
-    <button id="addCloseBtn" class="modal-close" aria-label="Close add course dialog">&times;</button>
+  <!-- Edit Course Modal -->
+  <div id="editModal" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+      <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="editCourseTitle">Edit Course</h2>
 
-    <form id="addCourseForm" novalidate>
-      <label for="addName">Course Name <span class="required">*</span></label>
-      <input id="addName" name="name" type="text" required />
+      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+        <input type="hidden" id="editingId" />
 
-      <label for="addCode">Course Code<span class="required">*</span></label>
-      <input id="addCode" name="code" type="text"  required/>
+        <label for="editName">Name *</label>
+        <input id="editName" required />
 
-      <label for="addDescription">Course Description</label>
-      <textarea id="addDescription" name="description" rows="4"></textarea>
+        <label for="editCode">Code</label>
+        <input id="editCode" />
 
-      <label for="addCredits">Course Credits<span class="required">*</span></label>
-      <input id="addCredits" name="credits" type="number" min="0" max="6" value="0" required/>
+        <label for="editDescription">Description</label>
+        <textarea id="editDescription" rows="3"></textarea>
 
-      <div class="modal-actions">
-        <button type="button" id="addSaveBtn" class="btn save-btn">Save</button>
-        <button type="button" id="addCancelBtn" class="btn cancel-btn">Cancel</button>
-      </div>
+        <label for="editCredits">Credits</label>
+        <input id="editCredits" type="number" min="0" />
 
-      <div id="addFormMessage" class="form-message" aria-live="polite"></div>
-    </form>
+        <label for="editInstructorSelect">Instructor</label>
+        <select id="editInstructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="editFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+            <button type="button" id="saveEditBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
-  </div>
-</div>
-
 
   <script src="courses.js"></script>
 </body>

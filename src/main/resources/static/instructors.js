@@ -9,36 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadInstructors() {
-    fetch(`/api/instructors?page=${currentPage}&size=10`)
-        .then(res => res.json())
+    fetch('/api/instructors/all')
+        .then(response => response.json())
         .then(data => {
-            totalPages = data.totalPages;
-            document.getElementById("pageInfo").innerText = `Page ${currentPage + 1} of ${totalPages}`;
+            const select = document.getElementById("courseInstructor");
+            select.innerHTML = "";
 
-            let tbody = document.getElementById("instructorTableBody");
-            tbody.innerHTML = "";
-
-            data.content.forEach(inst => {
-                let row = `
-                    <tr>
-                        <td>${inst.name}</td>
-                        <td>${inst.lastname}</td>
-                        <td>${inst.faculty}</td>
-                        <td>${inst.department}</td>
-                        <td>${inst.academicRank}</td>
-                        <td>${inst.degree}</td>
-                        <td>${inst.employment}</td>
-                        <td>${inst.proficiency}</td>
-                        <td>
-                            <button onclick="openEditPopup(${inst.id})">Edit</button>
-                            <button onclick="openDeletePopup(${inst.id})" style="background:#dc3545">Delete</button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
+            data.forEach(instructor => {
+                const option = document.createElement("option");
+                option.value = instructor.id;
+                option.textContent = instructor.firstName + " " + instructor.lastName;
+                select.appendChild(option);
             });
-        });
+        })
+        .catch(error => console.error("Error loading instructors:", error));
 }
+
 
 function searchInstructors() {
     let keyword = document.getElementById("searchInput").value.trim();

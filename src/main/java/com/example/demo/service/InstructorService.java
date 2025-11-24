@@ -50,4 +50,8 @@ public class InstructorService {
     public List<Instructor> search(String keyword) {
         return repository.search(keyword);
     }
+    public List<Instructor> getAllWithoutPagination() {
+    return repository.findAll();
+}
+
 }

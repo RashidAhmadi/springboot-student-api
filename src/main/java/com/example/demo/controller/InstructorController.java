@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/instructors")
 @CrossOrigin(origins = "*")
+
 public class InstructorController {
 
     @Autowired
@@ -24,12 +25,17 @@ public class InstructorController {
     ) {
         return service.getAll(page, size);
     }
-
+    // Return all instructors (for dropdown)
+    @GetMapping("/all")
+    public List<Instructor> getAllInstructorsList() {
+        return service.getAllWithoutPagination();
+    }
     // Get by ID
     @GetMapping("/{id}")
     public Instructor getById(@PathVariable Long id) {
         return service.getById(id);
     }
+    
 
     // Create
     @PostMapping
