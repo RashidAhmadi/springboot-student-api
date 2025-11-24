@@ -18,6 +18,9 @@ public class InstructorService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return repository.findAll(pageable);
     }
+    public List<Instructor> getAllInstructors() {
+    return repository.findAll();
+    }
 
     public Instructor save(Instructor instructor) {
         return repository.save(instructor);
@@ -52,6 +55,8 @@ public class InstructorService {
     }
     public List<Instructor> getAllWithoutPagination() {
     return repository.findAll();
+
+    
 }
 
 }

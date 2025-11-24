@@ -9,21 +9,98 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadInstructors() {
-    fetch('/api/instructors/all')
+    fetch("http://localhost:8080/api/instructors/all")
         .then(response => response.json())
         .then(data => {
-            const select = document.getElementById("courseInstructor");
-            select.innerHTML = "";
+            const tbody = document.getElementById("instructorTableBody");
+            tbody.innerHTML = "";
 
-            data.forEach(instructor => {
-                const option = document.createElement("option");
-                option.value = instructor.id;
-                option.textContent = instructor.firstName + " " + instructor.lastName;
-                select.appendChild(option);
+            data.forEach((ins, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${ins.name}</td>
+                        <td>${ins.lastname}</td>
+                        <td>${ins.faculty}</td>
+                        <td>${ins.department}</td>
+                        <td>${ins.academicRank}</td>
+                        <td>${ins.degree}</td>
+                        <td>${ins.employment}</td>
+                        <td>${ins.proficiency}</td>
+                        <td>
+                            <button onclick="editInstructor(${ins.id})">Edit</button>
+                            <button onclick="deleteInstructor(${ins.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
             });
         })
-        .catch(error => console.error("Error loading instructors:", error));
+        .catch(err => console.error("Error loading instructors:", err));
 }
+
+function loadInstructors() {
+    fetch("http://localhost:8080/api/instructors/all")
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("instructorTableBody");
+            tbody.innerHTML = "";
+
+            data.forEach((ins, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${ins.name}</td>
+                        <td>${ins.lastname}</td>
+                        <td>${ins.faculty}</td>
+                        <td>${ins.department}</td>
+                        <td>${ins.academicRank}</td>
+                        <td>${ins.degree}</td>
+                        <td>${ins.employment}</td>
+                        <td>${ins.proficiency}</td>
+                        <td>
+                            <button onclick="editInstructor(${ins.id})">Edit</button>
+                            <button onclick="deleteInstructor(${ins.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error("Error loading instructors:", err));
+}
+
+function loadInstructors() {
+    fetch("http://localhost:8080/api/instructors/all")
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("instructorTableBody");
+            tbody.innerHTML = "";
+
+            data.forEach((ins, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${ins.name}</td>
+                        <td>${ins.lastname}</td>
+                        <td>${ins.faculty}</td>
+                        <td>${ins.department}</td>
+                        <td>${ins.academicRank}</td>
+                        <td>${ins.degree}</td>
+                        <td>${ins.employment}</td>
+                        <td>${ins.proficiency}</td>
+                        <td>
+                            <button onclick="editInstructor(${ins.id})">Edit</button>
+                            <button onclick="deleteInstructor(${ins.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error("Error loading instructors:", err));
+}
+
+loadInstructors();
+
+
 
 
 function searchInstructors() {

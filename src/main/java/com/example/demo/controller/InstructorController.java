@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/instructors")
 @CrossOrigin(origins = "*")
-
 public class InstructorController {
 
     @Autowired
@@ -25,17 +24,18 @@ public class InstructorController {
     ) {
         return service.getAll(page, size);
     }
-    // Return all instructors (for dropdown)
+
+    // Return list of all instructors (for dropdowns, etc.)
     @GetMapping("/all")
-    public List<Instructor> getAllInstructorsList() {
-        return service.getAllWithoutPagination();
+    public List<Instructor> getAllInstructors() {
+        return service.getAllInstructors();
     }
+
     // Get by ID
     @GetMapping("/{id}")
     public Instructor getById(@PathVariable Long id) {
         return service.getById(id);
     }
-    
 
     // Create
     @PostMapping
@@ -56,10 +56,9 @@ public class InstructorController {
         return "Instructor deleted successfully";
     }
 
-    // Search API
+    // Search
     @GetMapping("/search")
     public List<Instructor> search(@RequestParam String keyword) {
         return service.search(keyword);
     }
 }
-
