@@ -1,3 +1,12 @@
+:root {
+  --primary: #2d8cf0;
+  --muted: #9aa6b2;
+  --danger: #e74c3c;
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #222;
+  --radius: 8px;
+}
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
@@ -70,7 +79,13 @@ th, td {
 }
 
 .popup-content input {
-    width: 100%;
+    width: 90%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.popup-content select {
+    width: 95%;
     padding: 8px;
     margin-bottom: 10px;
 }
@@ -79,4 +94,17 @@ th, td {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+    border:none;
+    border-radius:6px;
+}
+
+/* Actions */
+.actions button { margin-right:6px; border-radius:6px; padding:6px 8px; font-size:13px; }
+.btn-edit { background:#f39c12; color:white; border:none; }
+.btn-delete { background:var(--danger); color:white; border:none; }
+
+.top-bar button{
+    border: none;
+    border-radius: 6px;
+    background-color: green;
 }
