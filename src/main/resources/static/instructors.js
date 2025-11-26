@@ -1,5 +1,5 @@
-let currentPage = 0;
-let totalPages = 0;
+const BASE_URL = "http://localhost:8080/api/instructors";
+
 let instructorToDelete = null;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,39 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("instructorForm").addEventListener("submit", saveInstructor);
 });
 
-function loadInstructors() {
-    fetch("http://localhost:8080/api/instructors/all")
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.getElementById("instructorTableBody");
-            tbody.innerHTML = "";
-
-            data.forEach((ins, index) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${ins.name}</td>
-                        <td>${ins.lastname}</td>
-                        <td>${ins.faculty}</td>
-                        <td>${ins.department}</td>
-                        <td>${ins.academicRank}</td>
-                        <td>${ins.degree}</td>
-                        <td>${ins.employment}</td>
-                        <td>${ins.proficiency}</td>
-                        <td>
-                            <button onclick="editInstructor(${ins.id})">Edit</button>
-                            <button onclick="deleteInstructor(${ins.id})">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        })
-        .catch(err => console.error("Error loading instructors:", err));
-}
+// ================= LOAD ALL INSTRUCTORS =================
 
 function loadInstructors() {
-    fetch("http://localhost:8080/api/instructors/all")
-        .then(response => response.json())
+    fetch(`${BASE_URL}/all`)
+        .then(res => res.json())
         .then(data => {
             const tbody = document.getElementById("instructorTableBody");
             tbody.innerHTML = "";
@@ -58,55 +30,53 @@ function loadInstructors() {
                         <td>${ins.employment}</td>
                         <td>${ins.proficiency}</td>
                         <td class="actions">
-                            <button class="btn-edit" onclick="editInstructor(${ins.id})">Edit</button>
-                            <button class="btn-delete" onclick="deleteInstructor(${ins.id})">Delete</button>
+                            <button class="btn-edit" onclick="openEditPopup(${ins.id})">Edit</button>
+                            <button class="btn-delete" onclick="openDeletePopup(${ins.id})">Delete</button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         })
         .catch(err => console.error("Error loading instructors:", err));
 }
 
-loadInstructors();
-
-
-
+// ================= SEARCH =================
 
 function searchInstructors() {
-    let keyword = document.getElementById("searchInput").value.trim();
+    const keyword = document.getElementById("searchInput").value.trim();
 
     if (keyword === "") {
         loadInstructors();
         return;
     }
 
-    fetch(`/api/instructors/search?keyword=${keyword}`)
+    fetch(`${BASE_URL}/search?keyword=${keyword}`)
         .then(res => res.json())
         .then(data => {
-            let tbody = document.getElementById("instructorTableBody");
+            const tbody = document.getElementById("instructorTableBody");
             tbody.innerHTML = "";
 
-            data.forEach(inst => {
+            data.forEach((ins, index) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>${inst.name}</td>
-                        <td>${inst.lastname}</td>
-                        <td>${inst.faculty}</td>
-                        <td>${inst.department}</td>
-                        <td>${inst.academicRank}</td>
-                        <td>${inst.degree}</td>
-                        <td>${inst.employment}</td>
-                        <td>${inst.proficiency}</td>
+                        <td>${index + 1}</td>
+                        <td>${ins.name}</td>
+                        <td>${ins.lastname}</td>
+                        <td>${ins.faculty}</td>
+                        <td>${ins.department}</td>
+                        <td>${ins.academicRank}</td>
+                        <td>${ins.degree}</td>
+                        <td>${ins.employment}</td>
+                        <td>${ins.proficiency}</td>
                         <td>
-                            <button onclick="openEditPopup(${inst.id})">Edit</button>
-                            <button onclick="openDeletePopup(${inst.id})" style="background:#dc3545">Delete</button>
+                            <button onclick="openEditPopup(${ins.id})">Edit</button>
+                            <button onclick="openDeletePopup(${ins.id})" class="btn-delete">Delete</button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         });
 }
+
+// ================= ADD / EDIT POPUP =================
 
 function openAddPopup() {
     document.getElementById("popupTitle").innerText = "Add Instructor";
@@ -116,7 +86,7 @@ function openAddPopup() {
 }
 
 function openEditPopup(id) {
-    fetch(`/api/instructors/${id}`)
+    fetch(`${BASE_URL}/${id}`)
         .then(res => res.json())
         .then(inst => {
             document.getElementById("popupTitle").innerText = "Edit Instructor";
@@ -139,12 +109,14 @@ function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
 
+// ================= SAVE =================
+
 function saveInstructor(e) {
     e.preventDefault();
 
-    let id = document.getElementById("instructorId").value;
+    const id = document.getElementById("instructorId").value;
 
-    let instructor = {
+    const instructor = {
         name: document.getElementById("name").value,
         lastname: document.getElementById("lastname").value,
         faculty: document.getElementById("faculty").value,
@@ -155,8 +127,8 @@ function saveInstructor(e) {
         proficiency: document.getElementById("proficiency").value
     };
 
-    let method = id ? "PUT" : "POST";
-    let url = id ? `/api/instructors/${id}` : `/api/instructors`;
+    const method = id ? "PUT" : "POST";
+    const url = id ? `${BASE_URL}/${id}` : BASE_URL;
 
     fetch(url, {
         method: method,
@@ -168,6 +140,8 @@ function saveInstructor(e) {
     });
 }
 
+// ================= DELETE =================
+
 function openDeletePopup(id) {
     instructorToDelete = id;
     document.getElementById("confirmDeletePopup").style.display = "flex";
@@ -178,24 +152,10 @@ function closeDeletePopup() {
 }
 
 function confirmDelete() {
-    fetch(`/api/instructors/${instructorToDelete}`, {
+    fetch(`${BASE_URL}/${instructorToDelete}`, {
         method: "DELETE"
     }).then(() => {
         closeDeletePopup();
         loadInstructors();
     });
-}
-
-function nextPage() {
-    if (currentPage < totalPages - 1) {
-        currentPage++;
-        loadInstructors();
-    }
-}
-
-function prevPage() {
-    if (currentPage > 0) {
-        currentPage--;
-        loadInstructors();
-    }
 }

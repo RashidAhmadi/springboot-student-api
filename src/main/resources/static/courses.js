@@ -113,14 +113,14 @@ function renderTable(courses) {
     return;
   }
 
-  courses.forEach(c => {
+  courses.forEach((c, index) => {
     const instructorName = c.instructor
       ? `${c.instructor.name || ""} ${c.instructor.lastname || ""}`.trim()
       : "";
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${c.id}</td>
+      <td>${index+1}</td>
       <td>${escapeHtml(c.name || "")}</td>
       <td>${escapeHtml(c.code || "")}</td>
       <td>${escapeHtml(c.description || "")}</td>
