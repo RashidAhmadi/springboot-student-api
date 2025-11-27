@@ -1,45 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Student Manager</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Managment System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>University Managment System
+    </h1>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-  <h1>Student Management</h1>
-  <input type="text" id="searchBox" placeholder="Search student by name" />
-<button onclick="searchStudent()">Search</button>
+<!-- The sidebar -->
+<div class="sidebar">
+  <a href=""><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="faculty.html"><i class="fa fa-pencil fa-fw"></i> Faculty Management</a>
+  <a href="department.html"><i class="fa fa-pencil-square-o"></i> Department Management</a>
+  <a href="students.html"><i class="fa fa-id-card-o"></i> Students Management</a>
+  <a href="instructors.html"><i class="fa fa-fw fa-user"></i> Instructors Management</a>
+  <a href="courses.html"><i class="fa fa-book fa-fw"></i> Courses Management</a>
+  <a href="#contact"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+</div>
 
-<div id="results"></div>
-    <div class="form-container">
-        <input type="text" id="name" placeholder="Enter student name">
-        <input type="email" id="email" placeholder="Enter student email">
-        <input type="text" id="course" placeholder="Enter student course">
-        <button onclick="addStudent()">Add Student</button>
-    </div>
-  <table id="studentTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Course</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="studentBody">
-  </table>
-
-  <h2>Edit Student</h2>
-  <form id="editForm">
-    <input type="hidden" id="studentId">
-    <input type="text" id="uname" placeholder="New Name" required><br>
-    <input type="email" id="uemail" placeholder="New Email" required><br>
-    <input type="text" id="ucourse" placeholder="New Course" required><br>
-    <button type="submit">Save Changes</button>
-  </form>
-
-  <script src="script.js"></script>
 </body>
 </html>
