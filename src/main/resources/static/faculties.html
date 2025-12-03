@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="courses.css" />
+    <title>Faculties Managment</title>
+</head>
+<body>
+<div class="container">
+    <header>
+      <h1>Faculty Managment</h1>
+    </header>
+
+    <div class="top-bar">
+      <div class="left">
+        <input id="searchInput" placeholder="Search by name..." />
+        <button id="searchBtn">Search</button>
+        <button id="clearSearchBtn">Clear</button>
+      </div>
+      <div class="right">
+        <button id="openAddCourseBtn" class="primary">+ Add Faculty</button>
+      </div>
+    </div>
+
+    <table id="courseTable" class="data-table">
+      <thead>
+        <tr>
+          <th>F-ID</th>
+          <th>Faculty Name</th>
+          <th>Faculty Code</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+
+    <div id="pagination" class="pagination"></div>
+  </div>
+
+  <!-- Add Course Modal -->
+  <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+      <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="addCourseTitle">Add Faculty</h2>
+
+      <form id="addCourseForm" class="modal-form" onsubmit="return false;">
+        <label for="addName">Faculty Name *</label>
+        <input id="addName" required />
+
+        <label for="addCode">Faculty Code</label>
+        <input id="addCode" />
+
+        <label for="addDescription">Faculty Description</label>
+        <textarea id="addDescription" rows="3"></textarea>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="addFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="addCancelBtn" class="btn">Cancel</button>
+            <button type="button" id="addSaveBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Course Modal -->
+  <div id="editModal" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+      <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="editCourseTitle">Edit Faculty</h2>
+
+      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+        <input type="hidden" id="editingId" />
+
+        <label for="editName">Faculty Name *</label>
+        <input id="editName" required />
+
+        <label for="editCode">Faculty Code</label>
+        <input id="editCode" />
+
+        <label for="editDescription">Faculty Description</label>
+        <textarea id="editDescription" rows="3"></textarea>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="editFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+            <button type="button" id="saveEditBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="faculties.js"></script>
+</body>
+</html>
