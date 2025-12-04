@@ -41,11 +41,11 @@
     <div id="pagination" class="pagination"></div>
   </div>
 
-  <!-- Add Course Modal -->
+  <!-- Add Faculty Modal -->
   <div id="addFacultyOverlay" class="overlay hidden" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+    <div class="modal" role="dialog" aria-labelledby="addFacultyTitle">
       <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
-      <h2 id="addCourseTitle">Add Faculty</h2>
+      <h2 id="addFacultyTitle">Add Faculty</h2>
 
       <form id="addFacultyForm" class="modal-form" onsubmit="return false;">
         <label for="addName">Faculty Name *</label>
@@ -68,13 +68,13 @@
     </div>
   </div>
 
-  <!-- Edit Course Modal -->
+  <!-- Edit Faculty Modal -->
   <div id="editModal" class="overlay hidden" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+    <div class="modal" role="dialog" aria-labelledby="editFacultyTitle">
       <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
-      <h2 id="editCourseTitle">Edit Faculty</h2>
+      <h2 id="editFacultyTitle">Edit Faculty</h2>
 
-      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+      <form id="editFacultyForm" class="modal-form" onsubmit="return false;">
         <input type="hidden" id="editingId" />
 
         <label for="editName">Faculty Name *</label>

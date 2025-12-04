@@ -176,8 +176,6 @@ function openAddModal() {
   addFacultyForm.reset();
   addFormMessage.textContent = "";
   addFacultyOverlay.classList.remove("hidden");
-  // load instructors fresh
-  loadInstructorsIntoAdd();
   addName.focus();
 }
 
@@ -235,9 +233,6 @@ async function openEditModal(id) {
     editName.value = faculty.name || "";
     editCode.value = faculty.code || "";
     editDescription.value = faculty.description || "";
-    editCredits.value = faculty.credits ?? "";
-
-
     editFormMessage.textContent = "";
     editModal.classList.remove("hidden");
     editName.focus();
@@ -260,8 +255,6 @@ async function submitEdit() {
     name: editName.value.trim(),
     code: editCode.value.trim(),
     description: editDescription.value.trim(),
-    credits: Number(editCredits.value || 0),
-    instructorId: editInstructorSelect.value || null
   };
 
   saveEditBtn.disabled = true;
