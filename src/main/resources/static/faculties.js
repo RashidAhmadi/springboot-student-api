@@ -1,5 +1,5 @@
 // =================== CONFIG ===================
-const apiBase = "/api/courses"; // Course API endpoint
+const apiBase = "/api/faculties"; // Course API endpoint
 const instructorsAllEndpoint = "/api/instructors/all"; // expects full list (non-paginated)
 
 // Paging state
@@ -21,8 +21,6 @@ const editModal = document.getElementById("editModal");
 const editName = document.getElementById("editName");
 const editCode = document.getElementById("editCode");
 const editDescription = document.getElementById("editDescription");
-const editCredits = document.getElementById("editCredits");
-const editInstructorSelect = document.getElementById("editInstructorSelect");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const editCloseBtn = document.getElementById("editCloseBtn");
@@ -35,8 +33,6 @@ const addCourseForm = document.getElementById("addCourseForm");
 const addName = document.getElementById("addName");
 const addCode = document.getElementById("addCode");
 const addDescription = document.getElementById("addDescription");
-const addCredits = document.getElementById("addCredits");
-const addInstructorSelect = document.getElementById("instructorSelect");
 const addSaveBtn = document.getElementById("addSaveBtn");
 const addCancelBtn = document.getElementById("addCancelBtn");
 const addCloseBtn = document.getElementById("addCloseBtn");
@@ -46,9 +42,7 @@ let editingId = null;
 
 // =================== INIT ===================
 window.addEventListener("load", () => {
-  loadCourses(0);
-  // preload instructors for add form
-  loadInstructorsIntoAdd();
+  loadFaculties(0);
 });
 
 // Search and control bindings
@@ -82,7 +76,7 @@ editModal?.addEventListener("click", (e) => {
 });
 
 // =================== LOAD COURSES ===================
-async function loadCourses(page = 0) {
+async function loadFaculties(page = 0) {
   currentPage = page;
 
   const url = currentSearch
@@ -94,21 +88,21 @@ async function loadCourses(page = 0) {
     if (!res.ok) throw new Error(`API error ${res.status}`);
     const data = await res.json();
 
-    const courses = data.content || [];
+    const faculties = data.content || [];
     totalPages = data.totalPages || 0;
 
-    renderTable(courses);
+    renderTable(faculties);
     renderPagination();
   } catch (err) {
     console.error("Failed to load courses:", err);
-    tbody.innerHTML = `<tr><td colspan="7">Error loading courses</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7">Error loading faculties</td></tr>`;
   }
 }
 
 // =================== RENDER TABLE ===================
 function renderTable(courses) {
   tbody.innerHTML = "";
-  if (!courses.length) {
+  if (!faculties.length) {
     tbody.innerHTML = `<tr><td colspan="7">No courses found</td></tr>`;
     return;
   }

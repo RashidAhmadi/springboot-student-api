@@ -13,7 +13,6 @@ public class FacultyService {
     @Autowired
     private FacultyRepository repo;
 
-    @Autowired
     public Page<Faculty> listAllPaged(int page, int size) {
         Pageable p = PageRequest.of(page, size, Sort.by("id").descending());
         return repo.findAll(p);
