@@ -1,5 +1,5 @@
 // =================== CONFIG ===================
-const apiBase = "/api/faculties"; // Course API endpoint
+const apiBase = "/api/faculties"; // Faculty API endpoint
 const instructorsAllEndpoint = "/api/instructors/all"; // expects full list (non-paginated)
 
 // Paging state
@@ -9,12 +9,12 @@ let totalPages = 0;
 let currentSearch = "";
 
 // HTML elements
-const tbody = document.querySelector("#courseTable tbody");
+const tbody = document.querySelector("#facultyTable tbody");
 const paginationDiv = document.getElementById("pagination");
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
-const openAddCourseBtn = document.getElementById("openAddCourseBtn");
+const openAddFacultyBtn = document.getElementById("openAddFacultyBtn");
 
 // Edit modal elements
 const editModal = document.getElementById("editModal");
@@ -28,8 +28,8 @@ const editingIdField = document.getElementById("editingId");
 const editFormMessage = document.getElementById("editFormMessage");
 
 // Add modal elements
-const addCourseOverlay = document.getElementById("addCourseOverlay");
-const addCourseForm = document.getElementById("addCourseForm");
+const addFacultyOverlay = document.getElementById("addFacultyOverlay");
+const addFacultyForm = document.getElementById("addFacultyForm");
 const addName = document.getElementById("addName");
 const addCode = document.getElementById("addCode");
 const addDescription = document.getElementById("addDescription");
@@ -48,22 +48,22 @@ window.addEventListener("load", () => {
 // Search and control bindings
 searchBtn?.addEventListener("click", () => {
   currentSearch = searchInput.value.trim();
-  loadCourses(0);
+  loadFaculties(0);
 });
 clearSearchBtn?.addEventListener("click", () => {
   searchInput.value = "";
   currentSearch = "";
-  loadCourses(0);
+  loadFaculties(0);
 });
-openAddCourseBtn?.addEventListener("click", openAddModal);
+openAddFacultyBtn?.addEventListener("click", openAddModal);
 
 // Add modal bindings
-if (addCourseOverlay) {
+if (addFacultyOverlay) {
   addCloseBtn?.addEventListener("click", closeAddModal);
   addCancelBtn?.addEventListener("click", closeAddModal);
-  addSaveBtn?.addEventListener("click", submitAddCourse);
-  addCourseOverlay.addEventListener("click", (e) => {
-    if (e.target === addCourseOverlay) closeAddModal();
+  addSaveBtn?.addEventListener("click", submitAddFaculty);
+  addFacultyOverlay.addEventListener("click", (e) => {
+    if (e.target === addFacultyOverlay) closeAddModal();
   });
 }
 
@@ -75,7 +75,7 @@ editModal?.addEventListener("click", (e) => {
   if (e.target === editModal) closeEditModal();
 });
 
-// =================== LOAD COURSES ===================
+// =================== LOAD FACULTIES ===================
 async function loadFaculties(page = 0) {
   currentPage = page;
 
@@ -94,20 +94,20 @@ async function loadFaculties(page = 0) {
     renderTable(faculties);
     renderPagination();
   } catch (err) {
-    console.error("Failed to load courses:", err);
+    console.error("Failed to load faculties:", err);
     tbody.innerHTML = `<tr><td colspan="7">Error loading faculties</td></tr>`;
   }
 }
 
 // =================== RENDER TABLE ===================
-function renderTable(courses) {
+function renderTable(faculties) {
   tbody.innerHTML = "";
   if (!faculties.length) {
-    tbody.innerHTML = `<tr><td colspan="7">No courses found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7">No faculties found</td></tr>`;
     return;
   }
 
-  courses.forEach((c, index) => {
+  faculties.forEach((c, index) => {
     const instructorName = c.instructor
       ? `${c.instructor.name || ""} ${c.instructor.lastname || ""}`.trim()
       : "";
@@ -130,9 +130,9 @@ function renderTable(courses) {
   document.querySelectorAll(".btn-delete").forEach(btn =>
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
-      if (!confirm("Delete this course?")) return;
+      if (!confirm("Delete this faculty?")) return;
       await fetch(`${apiBase}/${id}`, { method: "DELETE" });
-      loadCourses(currentPage);
+      loadFaculties(currentPage);
     })
   );
 
@@ -149,7 +149,7 @@ function renderPagination() {
   const prev = document.createElement("button");
   prev.textContent = "Prev";
   prev.disabled = currentPage === 0;
-  prev.onclick = () => loadCourses(currentPage - 1);
+  prev.onclick = () => loadFaculties(currentPage - 1);
   paginationDiv.appendChild(prev);
 
   const maxButtons = 7;
@@ -160,32 +160,32 @@ function renderPagination() {
     const btn = document.createElement("button");
     btn.textContent = i + 1;
     if (i === currentPage) btn.classList.add("active");
-    btn.onclick = () => loadCourses(i);
+    btn.onclick = () => loadFaculties(i);
     paginationDiv.appendChild(btn);
   }
 
   const next = document.createElement("button");
   next.textContent = "Next";
   next.disabled = currentPage >= totalPages - 1;
-  next.onclick = () => loadCourses(currentPage + 1);
+  next.onclick = () => loadFaculties(currentPage + 1);
   paginationDiv.appendChild(next);
 }
 
-// =================== ADD COURSE ===================
+// =================== ADD FACULTY ===================
 function openAddModal() {
-  addCourseForm.reset();
+  addFacultyForm.reset();
   addFormMessage.textContent = "";
-  addCourseOverlay.classList.remove("hidden");
+  addFacultyOverlay.classList.remove("hidden");
   // load instructors fresh
   loadInstructorsIntoAdd();
   addName.focus();
 }
 
 function closeAddModal() {
-  addCourseOverlay.classList.add("hidden");
+  addFacultyOverlay.classList.add("hidden");
 }
 
-async function submitAddCourse() {
+async function submitAddFaculty() {
   addFormMessage.textContent = "";
   const payload = {
     name: addName.value.trim(),
@@ -214,7 +214,7 @@ async function submitAddCourse() {
     }
 
     closeAddModal();
-    loadCourses(0);
+    loadFaculties(0);
   } catch (err) {
     addFormMessage.textContent = "Network error.";
     console.error(err);
@@ -224,28 +224,25 @@ async function submitAddCourse() {
   }
 }
 
-// =================== EDIT COURSE ===================
+// =================== EDIT FACULTY ===================
 async function openEditModal(id) {
   try {
     const res = await fetch(`${apiBase}/${id}`);
     if (!res.ok) throw new Error("Not found");
-    const course = await res.json();
+    const faculty = await res.json();
 
-    editingIdField.value = course.id;
-    editName.value = course.name || "";
-    editCode.value = course.code || "";
-    editDescription.value = course.description || "";
-    editCredits.value = course.credits ?? "";
+    editingIdField.value = faculty.id;
+    editName.value = faculty.name || "";
+    editCode.value = faculty.code || "";
+    editDescription.value = faculty.description || "";
+    editCredits.value = faculty.credits ?? "";
 
-    // load instructors then set selected
-    await loadInstructorsIntoEdit();
-    editInstructorSelect.value = course.instructor ? (course.instructor.id || "") : "";
 
     editFormMessage.textContent = "";
     editModal.classList.remove("hidden");
     editName.focus();
   } catch (err) {
-    alert("Failed to load course.");
+    alert("Failed to load faculty.");
     console.error(err);
   }
 }
@@ -283,7 +280,7 @@ async function submitEdit() {
     }
 
     closeEditModal();
-    loadCourses(currentPage);
+    loadFaculties(currentPage);
   } catch (err) {
     editFormMessage.textContent = "Network error.";
     console.error(err);
