@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Department Management</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="courses.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Department Management</h1>
+    </header>
+
+    <div class="top-bar">
+      <div class="left">
+        <input id="searchInput" placeholder="Search by name..." />
+        <button id="searchBtn">Search</button>
+        <button id="clearSearchBtn">Clear</button>
+      </div>
+      <div class="right">
+        <button id="openAddCourseBtn" class="primary">+ Add Department</button>
+      </div>
+    </div>
+
+    <table id="courseTable" class="data-table">
+      <thead>
+        <tr>
+          <th>D-ID</th>
+          <th>D-Name</th>
+          <th>D-Code</th>
+          <th>Description</th>
+          <th>Faculty</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- filled by JS -->
+      </tbody>
+    </table>
+
+    <div id="pagination" class="pagination"></div>
+  </div>
+
+  <!-- Add Course Modal -->
+  <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+      <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="addCourseTitle">Add Course</h2>
+
+      <form id="addCourseForm" class="modal-form" onsubmit="return false;">
+        <label for="addName">Name *</label>
+        <input id="addName" required />
+
+        <label for="addCode">Code</label>
+        <input id="addCode" />
+
+        <label for="addDescription">Description</label>
+        <textarea id="addDescription" rows="3"></textarea>
+
+        <label for="addCredits">Credits</label>
+        <input id="addCredits" type="number" min="0" value="0" />
+
+        <label for="instructorSelect">Instructor</label>
+        <select id="instructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="addFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="addCancelBtn" class="btn">Cancel</button>
+            <button type="button" id="addSaveBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Course Modal -->
+  <div id="editModal" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+      <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="editCourseTitle">Edit Course</h2>
+
+      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+        <input type="hidden" id="editingId" />
+
+        <label for="editName">Name *</label>
+        <input id="editName" required />
+
+        <label for="editCode">Code</label>
+        <input id="editCode" />
+
+        <label for="editDescription">Description</label>
+        <textarea id="editDescription" rows="3"></textarea>
+
+        <label for="editCredits">Credits</label>
+        <input id="editCredits" type="number" min="0" />
+
+        <label for="editInstructorSelect">Instructor</label>
+        <select id="editInstructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="editFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+            <button type="button" id="saveEditBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="departments.js"></script>
+</body>
+</html>
