@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.FacultyRequest;
-import com.example.demo.model.Course;
 import com.example.demo.model.Faculty;
 import com.example.demo.service.FacultyService;
 import org.springframework.beans.factory.annotation.Autowired;
