@@ -1,6 +1,6 @@
 // =================== CONFIG ===================
-const apiBase = "/api/courses"; // Course API endpoint
-const instructorsAllEndpoint = "/api/instructors/all"; // expects full list (non-paginated)
+const apiBase = "/api/departments"; // Department API endpoint
+const facultiesAllEndpoint = "/api/faculties/all"; // expects full list (non-paginated)
 
 // Paging state
 let currentPage = 0;
@@ -9,19 +9,19 @@ let totalPages = 0;
 let currentSearch = "";
 
 // HTML elements
-const tbody = document.querySelector("#courseTable tbody");
+const tbody = document.querySelector("#departmentTable tbody");
 const paginationDiv = document.getElementById("pagination");
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
-const openAddCourseBtn = document.getElementById("openAddCourseBtn");
+const openAddDepartmentBtn = document.getElementById("openAddDepartmentBtn");
 
 // Edit modal elements
 const editModal = document.getElementById("editModal");
 const editName = document.getElementById("editName");
 const editCode = document.getElementById("editCode");
 const editDescription = document.getElementById("editDescription");
-const editInstructorSelect = document.getElementById("editInstructorSelect");
+const editDepartmentSelect = document.getElementById("editDepartmentSelect");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const editCloseBtn = document.getElementById("editCloseBtn");
@@ -29,12 +29,12 @@ const editingIdField = document.getElementById("editingId");
 const editFormMessage = document.getElementById("editFormMessage");
 
 // Add modal elements
-const addCourseOverlay = document.getElementById("addCourseOverlay");
-const addCourseForm = document.getElementById("addCourseForm");
+const addDepartmentOverlay = document.getElementById("addDepartmentOverlay");
+const addDepartmentForm = document.getElementById("addDepartmentForm");
 const addName = document.getElementById("addName");
 const addCode = document.getElementById("addCode");
 const addDescription = document.getElementById("addDescription");
-const addInstructorSelect = document.getElementById("instructorSelect");
+const addFacultySelect = document.getElementById("facultySelect");
 const addSaveBtn = document.getElementById("addSaveBtn");
 const addCancelBtn = document.getElementById("addCancelBtn");
 const addCloseBtn = document.getElementById("addCloseBtn");
@@ -44,30 +44,30 @@ let editingId = null;
 
 // =================== INIT ===================
 window.addEventListener("load", () => {
-  loadCourses(0);
-  // preload instructors for add form
-  loadInstructorsIntoAdd();
+  loadDepartments(0);
+  // preload faculty for add form
+  loadFacutiesIntoAdd();
 });
 
 // Search and control bindings
 searchBtn?.addEventListener("click", () => {
   currentSearch = searchInput.value.trim();
-  loadCourses(0);
+  loadDepartments(0);
 });
 clearSearchBtn?.addEventListener("click", () => {
   searchInput.value = "";
   currentSearch = "";
-  loadCourses(0);
+  loadDepartments(0);
 });
-openAddCourseBtn?.addEventListener("click", openAddModal);
+openAddDepatmentBtn?.addEventListener("click", openAddModal);
 
 // Add modal bindings
-if (addCourseOverlay) {
+if (addDepartmentOverlay) {
   addCloseBtn?.addEventListener("click", closeAddModal);
   addCancelBtn?.addEventListener("click", closeAddModal);
-  addSaveBtn?.addEventListener("click", submitAddCourse);
-  addCourseOverlay.addEventListener("click", (e) => {
-    if (e.target === addCourseOverlay) closeAddModal();
+  addSaveBtn?.addEventListener("click", submitAddDepartment);
+  addDepartmentOverlay.addEventListener("click", (e) => {
+    if (e.target === addDepartmentOverlay) closeAddModal();
   });
 }
 
@@ -79,8 +79,8 @@ editModal?.addEventListener("click", (e) => {
   if (e.target === editModal) closeEditModal();
 });
 
-// =================== LOAD COURSES ===================
-async function loadCourses(page = 0) {
+// =================== LOAD Departments ===================
+async function loadDepartments(page = 0) {
   currentPage = page;
 
   const url = currentSearch
@@ -92,28 +92,28 @@ async function loadCourses(page = 0) {
     if (!res.ok) throw new Error(`API error ${res.status}`);
     const data = await res.json();
 
-    const courses = data.content || [];
+    const departments = data.content || [];
     totalPages = data.totalPages || 0;
 
-    renderTable(courses);
+    renderTable(departments);
     renderPagination();
   } catch (err) {
-    console.error("Failed to load courses:", err);
-    tbody.innerHTML = `<tr><td colspan="7">Error loading courses</td></tr>`;
+    console.error("Failed to load departments:", err);
+    tbody.innerHTML = `<tr><td colspan="7">Error loading departments</td></tr>`;
   }
 }
 
 // =================== RENDER TABLE ===================
-function renderTable(courses) {
+function renderTable(departments) {
   tbody.innerHTML = "";
-  if (!courses.length) {
-    tbody.innerHTML = `<tr><td colspan="7">No courses found</td></tr>`;
+  if (!departments.length) {
+    tbody.innerHTML = `<tr><td colspan="7">No departments found</td></tr>`;
     return;
   }
 
-  courses.forEach((c, index) => {
-    const instructorName = c.instructor
-      ? `${c.instructor.name || ""} ${c.instructor.lastname || ""}`.trim()
+  departments.forEach((c, index) => {
+    const faccultyName = c.faculty
+      ? `${c.faculty.name || ""}`.trim()
       : "";
 
     const tr = document.createElement("tr");
@@ -122,7 +122,7 @@ function renderTable(courses) {
       <td>${escapeHtml(c.name || "")}</td>
       <td>${escapeHtml(c.code || "")}</td>
       <td>${escapeHtml(c.description || "")}</td>
-      <td>${escapeHtml(instructorName)}</td>
+      <td>${escapeHtml(faccultyName)}</td>
       <td class="actions">
         <button class="btn-edit" data-id="${c.id}">Edit</button>
         <button class="btn-delete" data-id="${c.id}">Delete</button>
@@ -135,9 +135,9 @@ function renderTable(courses) {
   document.querySelectorAll(".btn-delete").forEach(btn =>
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
-      if (!confirm("Delete this course?")) return;
+      if (!confirm("Delete this department?")) return;
       await fetch(`${apiBase}/${id}`, { method: "DELETE" });
-      loadCourses(currentPage);
+      loadDepartments(currentPage);
     })
   );
 
@@ -154,7 +154,7 @@ function renderPagination() {
   const prev = document.createElement("button");
   prev.textContent = "Prev";
   prev.disabled = currentPage === 0;
-  prev.onclick = () => loadCourses(currentPage - 1);
+  prev.onclick = () => loadDepartments(currentPage - 1);
   paginationDiv.appendChild(prev);
 
   const maxButtons = 7;
@@ -165,39 +165,39 @@ function renderPagination() {
     const btn = document.createElement("button");
     btn.textContent = i + 1;
     if (i === currentPage) btn.classList.add("active");
-    btn.onclick = () => loadCourses(i);
+    btn.onclick = () => loadDepartments(i);
     paginationDiv.appendChild(btn);
   }
 
   const next = document.createElement("button");
   next.textContent = "Next";
   next.disabled = currentPage >= totalPages - 1;
-  next.onclick = () => loadCourses(currentPage + 1);
+  next.onclick = () => loadDepartments(currentPage + 1);
   paginationDiv.appendChild(next);
 }
 
-// =================== ADD COURSE ===================
+// =================== ADD Department ===================
 function openAddModal() {
-  addCourseForm.reset();
+  addDepartmentForm.reset();
   addFormMessage.textContent = "";
-  addCourseOverlay.classList.remove("hidden");
-  // load instructors fresh
-  loadInstructorsIntoAdd();
+  addDepartmentOverlay.classList.remove("hidden");
+  // load faculties fresh
+  loadFacultiesIntoAdd();
   addName.focus();
 }
 
 function closeAddModal() {
-  addCourseOverlay.classList.add("hidden");
+  addDepartmentOverlay.classList.add("hidden");
 }
 
-async function submitAddCourse() {
+async function submitAddDepartment() {
   addFormMessage.textContent = "";
   const payload = {
     name: addName.value.trim(),
     code: addCode.value.trim(),
     description: addDescription.value.trim(),
     credits: Number(addCredits.value || 0),
-    instructorId: addInstructorSelect.value || null
+    facultyId: addFacultySelect.value || null
   };
 
   if (!payload.name) {
@@ -221,7 +221,7 @@ async function submitAddCourse() {
     }
 
     closeAddModal();
-    loadCourses(0);
+    loadDepartments(0);
   } catch (err) {
     addFormMessage.textContent = "Network error.";
     console.error(err);
@@ -231,28 +231,27 @@ async function submitAddCourse() {
   }
 }
 
-// =================== EDIT COURSE ===================
+// =================== EDIT Department ===================
 async function openEditModal(id) {
   try {
     const res = await fetch(`${apiBase}/${id}`);
     if (!res.ok) throw new Error("Not found");
-    const course = await res.json();
+    const department = await res.json();
 
-    editingIdField.value = course.id;
-    editName.value = course.name || "";
-    editCode.value = course.code || "";
-    editDescription.value = course.description || "";
-    editCredits.value = course.credits ?? "";
+    editingIdField.value = department.id;
+    editName.value = department.name || "";
+    editCode.value = department.code || "";
+    editDescription.value = department.description || "";
 
-    // load instructors then set selected
-    await loadInstructorsIntoEdit();
-    editInstructorSelect.value = course.instructor ? (course.instructor.id || "") : "";
+    // load faculty then set selected
+    await loadFacultyIntoEdit();
+    editFacultySelect.value = department.faculty ? (department.faculty.id || "") : "";
 
     editFormMessage.textContent = "";
     editModal.classList.remove("hidden");
     editName.focus();
   } catch (err) {
-    alert("Failed to load course.");
+    alert("Failed to load department.");
     console.error(err);
   }
 }
@@ -271,7 +270,7 @@ async function submitEdit() {
     code: editCode.value.trim(),
     description: editDescription.value.trim(),
     credits: Number(editCredits.value || 0),
-    instructorId: editInstructorSelect.value || null
+    facultyId: editFacultySelect.value || null
   };
 
   saveEditBtn.disabled = true;
@@ -290,7 +289,7 @@ async function submitEdit() {
     }
 
     closeEditModal();
-    loadCourses(currentPage);
+    loadDepartments(currentPage);
   } catch (err) {
     editFormMessage.textContent = "Network error.";
     console.error(err);
@@ -300,40 +299,40 @@ async function submitEdit() {
   }
 }
 
-// =================== LOAD INSTRUCTORS ===================
-async function loadInstructorsIntoAdd() {
+// =================== LOAD FACULTIES ===================
+async function loadFacultiesIntoAdd() {
   try {
-    const res = await fetch(instructorsAllEndpoint);
-    if (!res.ok) throw new Error("Instructor API error");
+    const res = await fetch(facultiesAllEndpoint);
+    if (!res.ok) throw new Error("Faculty API error");
     const list = await res.json();
 
-    addInstructorSelect.innerHTML = `<option value="">-- No instructor --</option>`;
+    addFacultySelect.innerHTML = `<option value="">-- No faculty --</option>`;
     list.forEach(i => {
-      addInstructorSelect.innerHTML += `
+      addFacultySelect.innerHTML += `
         <option value="${i.id}">${escapeHtml(i.name || "")} ${escapeHtml(i.lastname || "")}</option>
       `;
     });
   } catch (err) {
-    console.error("Failed to load instructors (add):", err);
-    addInstructorSelect.innerHTML = `<option value="">-- failed to load --</option>`;
+    console.error("Failed to load faculties (add):", err);
+    addFacultySelect.innerHTML = `<option value="">-- failed to load --</option>`;
   }
 }
 
-async function loadInstructorsIntoEdit() {
+async function loadFacultiesIntoEdit() {
   try {
-    const res = await fetch(instructorsAllEndpoint);
-    if (!res.ok) throw new Error("Instructor API error");
+    const res = await fetch(facultiesAllEndpoint);
+    if (!res.ok) throw new Error("Faculty API error");
     const list = await res.json();
 
-    editInstructorSelect.innerHTML = `<option value="">-- No instructor --</option>`;
+    editFacultySelect.innerHTML = `<option value="">-- No faculty --</option>`;
     list.forEach(i => {
-      editInstructorSelect.innerHTML += `
+      editFacultySelect.innerHTML += `
         <option value="${i.id}">${escapeHtml(i.name || "")} ${escapeHtml(i.lastname || "")}</option>
       `;
     });
   } catch (err) {
-    console.error("Failed to load instructors (edit):", err);
-    editInstructorSelect.innerHTML = `<option value="">-- failed to load --</option>`;
+    console.error("Failed to load faculties (edit):", err);
+    editFacultySelect.innerHTML = `<option value="">-- failed to load --</option>`;
   }
 }
 
