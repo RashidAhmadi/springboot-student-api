@@ -19,11 +19,11 @@
         <button id="clearSearchBtn">Clear</button>
       </div>
       <div class="right">
-        <button id="openAddCourseBtn" class="primary">+ Add Department</button>
+        <button id="openAddDepartmentBtn" class="primary">+ Add Department</button>
       </div>
     </div>
 
-    <table id="courseTable" class="data-table">
+    <table id="DepartmentTable" class="data-table">
       <thead>
         <tr>
           <th>Dep_ID</th>
@@ -42,13 +42,13 @@
     <div id="pagination" class="pagination"></div>
   </div>
 
-  <!-- Add Course Modal -->
-  <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+  <!-- Add Deparment Modal -->
+  <div id="addDepartmentOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addDepartmentTitle">
       <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
-      <h2 id="addCourseTitle">Add Course</h2>
+      <h2 id="addDepartmentTitle">Add Department</h2>
 
-      <form id="addCourseForm" class="modal-form" onsubmit="return false;">
+      <form id="addDepartmentForm" class="modal-form" onsubmit="return false;">
         <label for="addName">Name *</label>
         <input id="addName" required />
 
@@ -58,12 +58,9 @@
         <label for="addDescription">Description</label>
         <textarea id="addDescription" rows="3"></textarea>
 
-        <label for="addCredits">Credits</label>
-        <input id="addCredits" type="number" min="0" value="0" />
-
-        <label for="instructorSelect">Instructor</label>
-        <select id="instructorSelect">
-          <option value="">-- No instructor --</option>
+        <label for="facultySelect">Faculty</label>
+        <select id="facultySelect">
+          <option value="">-- No facculty --</option>
         </select>
 
         <div class="modal-actions">
@@ -77,13 +74,13 @@
     </div>
   </div>
 
-  <!-- Edit Course Modal -->
+  <!-- Edit Department Modal -->
   <div id="editModal" class="overlay hidden" aria-hidden="true">
-    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+    <div class="modal" role="dialog" aria-labelledby="editDepartmentTitle">
       <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
-      <h2 id="editCourseTitle">Edit Course</h2>
+      <h2 id="editDepartmentTitle">Edit Department</h2>
 
-      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+      <form id="editDepartmentForm" class="modal-form" onsubmit="return false;">
         <input type="hidden" id="editingId" />
 
         <label for="editName">Name *</label>
@@ -98,9 +95,9 @@
         <label for="editCredits">Credits</label>
         <input id="editCredits" type="number" min="0" />
 
-        <label for="editInstructorSelect">Instructor</label>
-        <select id="editInstructorSelect">
-          <option value="">-- No instructor --</option>
+        <label for="editFacultySelect">Faculty</label>
+        <select id="editFacultySelect">
+          <option value="">-- No faculty --</option>
         </select>
 
         <div class="modal-actions">

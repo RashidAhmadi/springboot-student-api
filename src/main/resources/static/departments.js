@@ -59,7 +59,7 @@ clearSearchBtn?.addEventListener("click", () => {
   currentSearch = "";
   loadDepartments(0);
 });
-openAddDepatmentBtn?.addEventListener("click", openAddModal);
+openAddDepartmentBtn?.addEventListener("click", openAddModal);
 
 // Add modal bindings
 if (addDepartmentOverlay) {
@@ -196,7 +196,6 @@ async function submitAddDepartment() {
     name: addName.value.trim(),
     code: addCode.value.trim(),
     description: addDescription.value.trim(),
-    credits: Number(addCredits.value || 0),
     facultyId: addFacultySelect.value || null
   };
 

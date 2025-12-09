@@ -1,10 +1,12 @@
 package com.example.demo.service;
 import com.example.demo.model.Faculty;
+import com.example.demo.model.Instructor;
 import com.example.demo.repository.FacultyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +15,13 @@ public class FacultyService {
     @Autowired
     private FacultyRepository repo;
 
+    public Page<Faculty> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return repo.findAll(pageable);
+    }
+    public List<Faculty> getAllFaculties() {
+    return repo.findAll();
+    }
     public Page<Faculty> listAllPaged(int page, int size) {
         Pageable p = PageRequest.of(page, size, Sort.by("id").descending());
         return repo.findAll(p);

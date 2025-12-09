@@ -2,7 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.FacultyRequest;
 import com.example.demo.model.Faculty;
+import com.example.demo.model.Instructor;
+import com.example.demo.service.CourseService;
 import com.example.demo.service.FacultyService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
@@ -12,14 +17,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/faculties")
 @CrossOrigin(origins = "*")
 public class FacultyController {
-
     @Autowired
     private FacultyService service;
 
+    // Pagination
     @GetMapping
-    public Page<Faculty> list(@RequestParam(defaultValue = "0") int page,
-                             @RequestParam(defaultValue = "5") int size) {
-        return service.listAllPaged(page, size);
+    public Page<Faculty> getAll(
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return service.getAll(page, size);
+    }
+
+    // Return list of all faculties (for dropdowns, etc.)
+    @GetMapping("/all")
+    public List<Faculty> getAllInstructors() {
+        return service.getAllFaculties();
     }
 
     @GetMapping("/search")
