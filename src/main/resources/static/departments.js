@@ -21,7 +21,7 @@ const editModal = document.getElementById("editModal");
 const editName = document.getElementById("editName");
 const editCode = document.getElementById("editCode");
 const editDescription = document.getElementById("editDescription");
-const editDepartmentSelect = document.getElementById("editDepartmentSelect");
+const editFacultySelect = document.getElementById("editFacultySelect");
 const saveEditBtn = document.getElementById("saveEditBtn");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const editCloseBtn = document.getElementById("editCloseBtn");
@@ -46,7 +46,7 @@ let editingId = null;
 window.addEventListener("load", () => {
   loadDepartments(0);
   // preload faculty for add form
-  loadFacutiesIntoAdd();
+  loadFacultiesIntoAdd();
 });
 
 // Search and control bindings
@@ -243,7 +243,7 @@ async function openEditModal(id) {
     editDescription.value = department.description || "";
 
     // load faculty then set selected
-    await loadFacultyIntoEdit();
+    await loadFacultiesIntoEdit();
     editFacultySelect.value = department.faculty ? (department.faculty.id || "") : "";
 
     editFormMessage.textContent = "";
@@ -268,7 +268,6 @@ async function submitEdit() {
     name: editName.value.trim(),
     code: editCode.value.trim(),
     description: editDescription.value.trim(),
-    credits: Number(editCredits.value || 0),
     facultyId: editFacultySelect.value || null
   };
 
@@ -308,7 +307,7 @@ async function loadFacultiesIntoAdd() {
     addFacultySelect.innerHTML = `<option value="">-- No faculty --</option>`;
     list.forEach(i => {
       addFacultySelect.innerHTML += `
-        <option value="${i.id}">${escapeHtml(i.name || "")} ${escapeHtml(i.lastname || "")}</option>
+        <option value="${i.id}">${escapeHtml(i.name || "")}</option>
       `;
     });
   } catch (err) {
