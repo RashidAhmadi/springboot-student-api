@@ -1,45 +1,142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Student Manager</title>
-  <link rel="stylesheet" href="students.css">
+  <meta charset="utf-8" />
+  <title>Course Management</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="courses.css" />
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>Student Management</h1>
+    </header>
 
-  <h1>Student Management</h1>
-  <input type="text" id="searchBox" placeholder="Search student by name" />
-<button onclick="searchStudent()">Search</button>
-
-<div id="results"></div>
-    <div class="form-container">
-        <input type="text" id="name" placeholder="Enter student name">
-        <input type="email" id="email" placeholder="Enter student email">
-        <input type="text" id="course" placeholder="Enter student course">
-        <button onclick="addStudent()">Add Student</button>
+    <div class="top-bar">
+      <div class="left">
+        <input id="searchInput" placeholder="Search by name..." />
+        <button id="searchBtn">Search</button>
+        <button id="clearSearchBtn">Clear</button>
+      </div>
+      <div class="right">
+        <button id="openAddCourseBtn" class="primary">+ Add Student</button>
+      </div>
     </div>
-  <table id="studentTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Course</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="studentBody">
-  </table>
 
-  <h2>Edit Student</h2>
-  <form id="editForm">
-    <input type="hidden" id="studentId">
-    <input type="text" id="uname" placeholder="New Name" required><br>
-    <input type="email" id="uemail" placeholder="New Email" required><br>
-    <input type="text" id="ucourse" placeholder="New Course" required><br>
-    <button type="submit">Save Changes</button>
-  </form>
+    <table id="courseTable" class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Faculty</th>
+          <th>Department </th>
+          <th>Semester</th>
+          <th>Email</th>
+          <th>Telephone No</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- filled by JS -->
+      </tbody>
+    </table>
 
-  <script src="students.js"></script>
+    <div id="pagination" class="pagination"></div>
+  </div>
+
+  <!-- Add Course Modal -->
+  <div id="addCourseOverlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addCourseTitle">
+      <button id="addCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="addCourseTitle">Add Student</h2>
+
+      <form id="addCourseForm" class="modal-form" onsubmit="return false;">
+        <label for="addfName">First Name *</label>
+        <input id="addName" required />
+
+        <label for="addlName">Last Name *</label>
+        <input id="addName" required />
+
+        <label for="facultySelect">Faculty</label>
+        <select id="facultySelect">
+          <option value="">-- No Faculty --</option>
+        </select>
+
+
+        <label for="departmentSelect">Department</label>
+        <select id="departmentSelect">
+          <option value="">-- No Department --</option>
+        </select>
+
+        <label for="semesterSelect">Semester</label>
+        <select id="semesterSelect">
+          <option value="Semester 1">1st Semester</option>
+          <option value="Semester 2">2nd Semester</option>
+          <option value="Semester 3">3rd Semester</option>
+        </select>
+        <label for="addCode">Code</label>
+        <input id="addCode" />
+
+        <label for="addDescription">Description</label>
+        <textarea id="addDescription" rows="3"></textarea>
+
+        <label for="addCredits">Credits</label>
+        <input id="addCredits" type="number" min="0" value="0" />
+
+        <label for="instructorSelect">Instructor</label>
+        <select id="instructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="addFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="addCancelBtn" class="btn">Cancel</button>
+            <button type="button" id="addSaveBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Course Modal -->
+  <div id="editModal" class="overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="editCourseTitle">
+      <button id="editCloseBtn" class="modal-close" title="Close">&times;</button>
+      <h2 id="editCourseTitle">Edit Course</h2>
+
+      <form id="editCourseForm" class="modal-form" onsubmit="return false;">
+        <input type="hidden" id="editingId" />
+
+        <label for="editName">Name *</label>
+        <input id="editName" required />
+
+        <label for="editCode">Code</label>
+        <input id="editCode" />
+
+        <label for="editDescription">Description</label>
+        <textarea id="editDescription" rows="3"></textarea>
+
+        <label for="editCredits">Credits</label>
+        <input id="editCredits" type="number" min="0" />
+
+        <label for="editInstructorSelect">Instructor</label>
+        <select id="editInstructorSelect">
+          <option value="">-- No instructor --</option>
+        </select>
+
+        <div class="modal-actions">
+          <div class="left-msg" id="editFormMessage"></div>
+          <div class="right-buttons">
+            <button type="button" id="cancelEditBtn" class="btn">Cancel</button>
+            <button type="button" id="saveEditBtn" class="primary">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="courses.js"></script>
 </body>
 </html>

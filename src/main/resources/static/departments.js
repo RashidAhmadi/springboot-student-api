@@ -111,21 +111,21 @@ function renderTable(departments) {
     return;
   }
 
-  departments.forEach((c, index) => {
-    const faccultyName = c.faculty
-      ? `${c.faculty.name || ""}`.trim()
+  departments.forEach((d, index) => {
+    const faccultyName = d.faculty
+      ? `${d.faculty.name || ""}`.trim()
       : "";
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${index+1}</td>
-      <td>${escapeHtml(c.name || "")}</td>
-      <td>${escapeHtml(c.code || "")}</td>
-      <td>${escapeHtml(c.description || "")}</td>
+      <td>${escapeHtml(d.name || "")}</td>
+      <td>${escapeHtml(d.code || "")}</td>
+      <td>${escapeHtml(d.description || "")}</td>
       <td>${escapeHtml(faccultyName)}</td>
       <td class="actions">
-        <button class="btn-edit" data-id="${c.id}">Edit</button>
-        <button class="btn-delete" data-id="${c.id}">Delete</button>
+        <button class="btn-edit" data-id="${d.id}">Edit</button>
+        <button class="btn-delete" data-id="${d.id}">Delete</button>
       </td>
     `;
     tbody.appendChild(tr);
