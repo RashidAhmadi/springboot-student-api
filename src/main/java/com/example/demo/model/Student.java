@@ -1,4 +1,6 @@
 package com.example.demo.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -7,29 +9,49 @@ public class Student {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String fname;
+    private String lname;
+
+    // NEW: many-to-one relationship to Faculty
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Faculty faculty;
+
+    // NEW: many-to-one relationship to Faculty
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Department department;
+
+    private String semester;
     private String email;
-    private String course;
+    private String telephone;
 
     public Student() { }
-
-    public Student(Long id, String name, String email, String course) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.course = course;
-    }
-
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getFName() { return fname; }
+    public void setFName(String fname) { this.fname = fname; }
+
+    public String getLName() { return lname; }
+    public void setLName(String lname) { this.lname = lname; }
+
+    public Faculty getFaculty() { return faculty; }
+    public void setFaculty(Faculty faculty) { this.faculty = faculty; }
+
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
+
+    public String getSemester() { return semester; }
+    public void setSemester(String semester) { this.semester = semester; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getCourse() { return course; }
-    public void setCourse(String course) { this.course = course; }
+    public String getTel() { return telephone; }
+    public void setTel(String telephone) { this.telephone = telephone; }
+    
 }

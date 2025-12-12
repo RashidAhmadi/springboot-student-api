@@ -33,7 +33,7 @@
           <th>Department </th>
           <th>Semester</th>
           <th>Email</th>
-          <th>Telephone No</th>
+          <th>Telephone</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -53,10 +53,10 @@
 
       <form id="addCourseForm" class="modal-form" onsubmit="return false;">
         <label for="addfName">First Name *</label>
-        <input id="addName" required />
+        <input id="addfName" required />
 
         <label for="addlName">Last Name *</label>
-        <input id="addName" required />
+        <input id="addlName" required />
 
         <label for="facultySelect">Faculty</label>
         <select id="facultySelect">
@@ -75,19 +75,11 @@
           <option value="Semester 2">2nd Semester</option>
           <option value="Semester 3">3rd Semester</option>
         </select>
-        <label for="addCode">Code</label>
-        <input id="addCode" />
+        <label for="email">Email</label>
+        <input id="email" />
 
-        <label for="addDescription">Description</label>
-        <textarea id="addDescription" rows="3"></textarea>
-
-        <label for="addCredits">Credits</label>
-        <input id="addCredits" type="number" min="0" value="0" />
-
-        <label for="instructorSelect">Instructor</label>
-        <select id="instructorSelect">
-          <option value="">-- No instructor --</option>
-        </select>
+        <label for="telephone">Telephone</label>
+        <input id="telephone"/>
 
         <div class="modal-actions">
           <div class="left-msg" id="addFormMessage"></div>

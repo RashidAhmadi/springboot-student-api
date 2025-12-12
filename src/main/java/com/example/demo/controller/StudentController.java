@@ -1,4 +1,5 @@
 package com.example.demo.controller;
+import com.example.demo.model.Course;
 import com.example.demo.model.Student;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class StudentController {
     @PutMapping("/{id}")
     public Student updateStudent(@PathVariable Long id, @RequestBody Student studentDetails) {
         Student s = studentRepository.findById(id).orElseThrow();
-        s.setName(studentDetails.getName());
+        s.setFName(studentDetails.getFName());
+        s.setLName(studentDetails.getLName());
+        Student created = service.create(c, req.facultyId);
         s.setEmail(studentDetails.getEmail());
         s.setCourse(studentDetails.getCourse());
         return studentRepository.save(s);
