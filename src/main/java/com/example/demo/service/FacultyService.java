@@ -1,6 +1,5 @@
 package com.example.demo.service;
 import com.example.demo.model.Faculty;
-import com.example.demo.model.Instructor;
 import com.example.demo.repository.FacultyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
